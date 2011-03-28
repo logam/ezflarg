@@ -11,11 +11,17 @@ package com.tchatcho.constructors {
 
 	import org.papervision3d.objects.DisplayObject3D;
 
+	// TEST
+	import com.quilombo.constructors.LoadingEzflarEx;
+
 	public class PICTUREconstructor extends Plane {
-		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
+		//private var _ldr:LoadingEZFLAR = LoadingEZFLAR();
+		private var _ldr:LoadingEzflarEx = new LoadingEzflarEx();
+
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _front_plane:Plane;
 		public function PICTUREconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
+			_ldr.init();
 			startLoader();
 			if (url != null){
 				var pictureMaterial:BitmapFileMaterial = new BitmapFileMaterial(url, true);

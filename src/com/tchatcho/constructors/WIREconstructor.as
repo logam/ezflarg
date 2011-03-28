@@ -10,13 +10,19 @@ package com.tchatcho.constructors {
 		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _wire:Plane;
-		public function WIREconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
+		public function WIREconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) 
+		{
 			startLoader();
-			if (url2 != null){
-				var wfm:WireframeMaterial = new WireframeMaterial(uint(url2));
-			} else {
+			var wfm:WireframeMaterial;
+
+			if (url2 != null)
+			{
+				wfm = new WireframeMaterial(uint(url2));
+			} 
+			else 
+			{
 				trace("HEY!, YOU CAN USE COLORS IN HEXA TOO ;) . PUT ANOTHER ARGUMENT TO DO THAT. IM GONNA USE THIS ONE: 0xffff00");
-				var wfm:WireframeMaterial = new WireframeMaterial(0xffff00);
+				wfm = new WireframeMaterial(0xffff00);
 			}
 
 			wfm.doubleSided = true;

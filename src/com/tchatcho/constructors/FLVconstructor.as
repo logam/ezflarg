@@ -47,8 +47,8 @@ package com.tchatcho.constructors {
 			front__videomaterial.animated = true;
 			front__videomaterial.doubleSided = true;
 
-			var front__videomaterial:VideoStreamMaterial = front__videomaterial;
-			_front_plane = new Plane(front__videomaterial, 640, 480, 4, 4);
+			var front__videomaterialCopy:VideoStreamMaterial = front__videomaterial;
+			_front_plane = new Plane(front__videomaterialCopy, 640, 480, 4, 4);
 			_front_plane.scale = 0.3;
 			this._universe = new DisplayObject3D();
 			this._universe.z = 3;

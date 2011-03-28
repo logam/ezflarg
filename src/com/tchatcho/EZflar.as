@@ -40,17 +40,19 @@ package com.tchatcho {
 	[SWF(width="640", height="480", frameRate="30", backgroundColor="#FFFFFF")]
 	public class EZflar extends Sprite {
 		//defaults paths to assets inside resources folder
-		private static const PATH_TO_MODELS:String = "models/";
-		private static const CAMERA_PARAMS_PATH:String = "flar/FLARparams.dat";
-		private static const PATTERN_PATH:String = "flar/patterns/";
-		private static const PATTERN_RESOLUTION:uint = 16;
+		
+		/*private*/ protected static const PATH_TO_MODELS:String = "models/";
+		/*private*/ protected static const CAMERA_PARAMS_PATH:String = "flar/FLARparams.dat";
+		/*private*/ protected static const PATTERN_PATH:String = "flar/patterns/";
+		// private static const PATTERN_RESOLUTION:uint = 16;
 
-		private var patterns:Array;
-		private var flarManager:FLARManager;
-		private var flarLoader:FLARLoaderSource;
-		private var base_model:Base_model;
-		private var _camSource:FLARCameraSource;
-		private var _objects:Array;
+		/*private*/ protected var patterns:Array;
+		/*private*/ protected var flarManager:FLARManager;
+		/*private*/ protected var flarLoader:FLARLoaderSource;
+		/*private*/ protected var base_model:Base_model;
+		/*private*/ protected var _camSource:FLARCameraSource;
+		/*private*/ protected var _objects:Array;
+		
 		private var _width:int;
 		private var _height:int;
 		private var _frameRate:Number;
@@ -58,33 +60,42 @@ package com.tchatcho {
 		private var _isMirrored:Boolean = false;
 		private var _noCamMessage:String = "Sorry ;( ... we need a cam";
 		private var _noCamColorTxt:uint = 0x00FF00;
-		private var _noCamColorBackground = 0xCCFFCC;
+		private var _noCamColorBackground:uint = 0xCCFFCC;
 		private var _nocam:NoCamera;
-		private var _pathToResources:String = new String();
 		
-		private var _funcStarted:Function;
-		private var _funcAdded:Function;
-		private var _funcUpdated:Function;
-		private var _funcRemoved:Function;
+		/*private*/protected var _pathToResources:String = new String();
+		
+		protected var _patternResolution:uint = 16;
+		protected var _patternThreshold:uint = 80;
+
+		/*private*/ protected var _funcStarted:Function;
+		/*private*/ protected var _funcAdded:Function;
+		/*private*/ protected var _funcUpdated:Function;
+		/*private*/ protected var _funcRemoved:Function;
+
 
 		public function EZflar (objects:Array,
 								 width:int = 640,
 								 height:int = 480,
 								 frameRate:Number = 30,
 								 downSampleRatio:Number = 0.5,
+								 res:uint = 16,
+								 thresh:uint = 20,
 								 mirror:Boolean = true){
 			_width = width;
 			_height = height;
 			_frameRate = frameRate;
 			_downSampleRatio = downSampleRatio;
 			_objects = objects;
+			_patternResolution = res;
+			_patternThreshold = thresh;
 		}
 		public function initializer(theStage:*, newPath:String = "./resources/"):void{
 			this._pathToResources = newPath;
 			this.init();
 			theStage.addChild(this);
 		};
-		private function init () :void {
+		/*private*/ protected function init () :void {
 			trace("EZFLAR 0.1(beta) is running!  :)\n keep calm and look busy!\n");
 			if(Camera.names.length > 0) {
 				_camSource = new FLARCameraSource(_width, _height, _frameRate, _downSampleRatio)
@@ -93,7 +104,7 @@ package com.tchatcho {
 				for (var i:int = 0; i < _objects.length; i++) {
 					if(_objects[i][0][2] == undefined){_objects[i][0][2] = null}
 					if(_objects[i][1] == undefined){_objects[i][1] = null}
-					this.patterns.push(new FLARPattern(_pathToResources + PATTERN_PATH+ _objects[i][0][0], PATTERN_RESOLUTION));
+					this.patterns.push(new FLARPattern(_pathToResources + PATTERN_PATH+ _objects[i][0][0], _patternResolution/*PATTERN_RESOLUTION*/));
 				}
 
 				// use Camera (default)
@@ -145,7 +156,7 @@ package com.tchatcho {
 			var framerateDisplay:FramerateDisplay = new FramerateDisplay();
 			this.stage.addChild(framerateDisplay);
 		}
-		private function onFlarManagerInited (evt:Event) :void {
+		/*private*/ protected function onFlarManagerInited (evt:Event) :void {
 			this.base_model = new Base_model(_objects,
 				this.patterns.length,
 				this.flarManager.cameraParams,
@@ -158,20 +169,20 @@ package com.tchatcho {
 				_funcStarted();
 			}
 		}
-		private function onMarkerAdded (evt:FLARMarkerEvent) :void {
+		/*private*/ protected function onMarkerAdded (evt:FLARMarkerEvent) :void {
 			this.base_model.addMarker(evt.marker);
 			if (_funcAdded != null){
 				_funcAdded(evt);
 			}
 		}
 
-		private function onMarkerUpdated (evt:FLARMarkerEvent) :void {
+		/*private*/ protected function onMarkerUpdated (evt:FLARMarkerEvent) :void {
 			if (_funcUpdated != null){
 				_funcUpdated(evt);
 			}
 		}
 
-		private function onMarkerRemoved (evt:FLARMarkerEvent) :void {
+		/*private*/ protected function onMarkerRemoved (evt:FLARMarkerEvent) :void {
 			this.base_model.removeMarker(evt.marker);
 			if (_funcRemoved != null){
 				_funcRemoved(evt);
@@ -203,6 +214,36 @@ package com.tchatcho {
 			}else{
 				return arrToReturn;
 			};
+		}
+
+		public function viewWidth():int
+		{
+			return _width;
+		}
+
+		public function viewHeight():int
+		{
+			return _height;
+		}
+
+		public function get patternResolution():uint
+		{
+			return _patternResolution;
+		}
+
+		public function get patternThreshold():uint
+		{
+			return _patternThreshold;
+		}
+
+		protected function set patternThreshold(value:uint):void
+		{
+			_patternThreshold = value;
+		}
+
+		protected function set patternResolution(value:uint):void
+		{
+			_patternResolution = value;
 		}
 	}
 }

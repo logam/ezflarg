@@ -70,10 +70,17 @@ package com.tchatcho {
 			}
 			objectsToAdd.push([constructURL([marker.patternId, _objects[marker.patternId][0][1], _objects[marker.patternId][0][2]]),_objects[marker.patternId][1]]);
 			// associate container with corresponding marker
-			for (var i:int = 0; i < objectsToAdd.length; i++){
-				if(objectsToAdd[i][0][0] == marker.patternId){
-					var modelParsed:DisplayObject3D = placeModels(objectsToAdd[i][0][0], objectsToAdd[i][0][1], objectsToAdd[i][0][2], objectsToAdd[i][1]);
-					this._markersByPatternId.push(new Array (objectsToAdd[i][0][0], marker, modelParsed));
+			for (var j:int = 0; j < objectsToAdd.length; j++)	
+			{
+				if(objectsToAdd[j][0][0] == marker.patternId)
+				{
+					var modelParsed:DisplayObject3D = placeModels(
+										objectsToAdd[j][0][0], 
+										objectsToAdd[j][0][1], 
+										objectsToAdd[j][0][2], 
+										objectsToAdd[j][1]);
+
+					this._markersByPatternId.push(new Array (objectsToAdd[j][0][0], marker, modelParsed));
 				}
 			}
 			_oldCount = new Date();
@@ -82,24 +89,30 @@ package com.tchatcho {
 		public function removeMarker (marker:FLARMarker) :void {
 			// find and remove marker
 			_newCount = new Date();
-			if((_newCount.getTime() - _oldCount.getTime()) > 40){//prevent inconsistences
+			if((_newCount.getTime() - _oldCount.getTime()) > 40)
+			{	//prevent inconsistences
 				var markerList:Array = new Array();
-			var markerList2:Array = new Array;
-			for (var i:int = 0; i < this._markersByPatternId.length; i++){
-				markerList.push(this._markersByPatternId[i])
+				var markerList2:Array = new Array;
+				for (var i:int = 0; i < this._markersByPatternId.length; i++)
+				{
+					markerList.push(this._markersByPatternId[i])
 				}
-				for (var i:int = 0; i < markerList.length; i++ ) {
-					if (markerList[i][0] == marker.patternId){
-						this._scene3D.removeChild(markerList[i][2]);
-					} else {
-						markerList2.push(markerList[i])
-						}
+				for (var j:int = 0; j < markerList.length; j++ ) 
+				{
+					if (markerList[j][0] == marker.patternId)
+					{
+						this._scene3D.removeChild(markerList[j][2]);
+					} 
+					else 
+					{
+						markerList2.push(markerList[j])
 					}
-					this._markersByPatternId = markerList2;
+				}
+				this._markersByPatternId = markerList2;
 				};
 				mp3events.dispatchMP3 = true;
 			}
-			private function updateModels () :void {
+			/*private*/ protected function updateModels () :void {
 				// update all Models containers according to the transformation matrix in their associated FLARMarkers
 				for (var i:int = 0; i < this._markersByPatternId.length; i++){
 					this._markersByPatternId[i][2].transform = FLARPVGeomUtils.translateFLARMatrixToPVMatrix(this._markersByPatternId[i][1].transformMatrix);
@@ -129,7 +142,7 @@ package com.tchatcho {
 				this.updateModels();
 				this._renderEngine.render();
 			}
-			private function placeModels(patternId:int, url:String = null, url2:String = null, objName:String = null):DisplayObject3D{
+			/*private*/ protected function placeModels(patternId:int, url:String = null, url2:String = null, objName:String = null):DisplayObject3D{
 				var _format:String = url.toString();
 				_format = _format.substring(_format.length - 3,_format.length).toUpperCase();
 				switch (_format){
@@ -160,23 +173,23 @@ package com.tchatcho {
 					break;
 
 					case "JPG" ://picture jpg
-					var picture:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
-					return containerReady(picture.object);
+					var jpg:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
+					return containerReady(jpg.object);
 					break;
 
 					case "PEG" ://picture jpeg
-					var picture:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
-					return containerReady(picture.object);
+					var jpeg:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
+					return containerReady(jpeg.object);
 					break;
 
 					case "GIF" ://picture gif
-					var picture:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
-					return containerReady(picture.object);
+					var gif:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
+					return containerReady(gif.object);
 					break;
 
 					case "PNG" ://picture png
-					var picture:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
-					return containerReady(picture.object);
+					var png:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
+					return containerReady(png.object);
 					break;
 					
 					case "MP3" ://*.mp3
@@ -200,8 +213,8 @@ package com.tchatcho {
 					break;
 
 					case "EXT" ://txt15chars
-					var txt:TXT40constructor = new TXT40constructor(patternId, url, url2, objName);
-					return containerReady(txt.object);
+					var text:TXT40constructor = new TXT40constructor(patternId, url, url2, objName);
+					return containerReady(text.object);
 					break;
 
 					case "URL" ://navigate to url

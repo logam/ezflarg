@@ -22,9 +22,10 @@ package com.tchatcho.constructors {
 			child.graphics.drawRoundRect(0, 0, 100, 50, 20);
 			child.graphics.endFill();
 			this.addChild(child);
-
+			
 			var noCamMsg:TextField               = new TextField();
 			noCamMsg.text                        = "LOADING\n...";			
+			
 			var format:TextFormat                = new TextFormat();
 			format.size                          = 19;
 			format.align                         = "center";
@@ -32,7 +33,7 @@ package com.tchatcho.constructors {
 			noCamMsg.x = 1;
 			noCamMsg.y = 7;
 			this.addChild(noCamMsg);
-
+			
 			var front_material:MovieMaterial     = new MovieMaterial(this, true);
 			front_material.doubleSided           = true;
 			var front_plane:Plane = new Plane(front_material, 400, 400, 2, 2);

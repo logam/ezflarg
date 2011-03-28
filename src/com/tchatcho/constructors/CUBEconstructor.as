@@ -19,15 +19,19 @@ package com.tchatcho.constructors {
 		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _cube:Cube;
-		public function CUBEconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
+		public function CUBEconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) 
+		{
 			startLoader();
-			if (url2 != null){
-				var cubeMaterial:BitmapFileMaterial = new BitmapFileMaterial(url2, true);
-				cubeMaterial.doubleSided = true;
-				var materialList:MaterialsList = new MaterialsList();
-				materialList.addMaterial(cubeMaterial, 'all');
-				_cube = new Cube(materialList);
-			} else {
+			if (url2 != null)
+			{
+				var cubeMaterialBmp:BitmapFileMaterial = new BitmapFileMaterial(url2, true);
+				cubeMaterialBmp.doubleSided = true;
+				var materialListBmp:MaterialsList = new MaterialsList();
+				materialListBmp.addMaterial(cubeMaterialBmp, 'all');
+				_cube = new Cube(materialListBmp);
+			} 
+			else 
+			{
 				var materialList:MaterialsList = new MaterialsList();
 				materialList.addMaterial(new WireframeMaterial(0xffff00), 'all');
 				_cube = new Cube(materialList);
