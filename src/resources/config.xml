@@ -1,7 +1,7 @@
 <Configuration>
 	<patternresolution>16</patternresolution>
 	<patternborderratio>50</patternborderratio>
-	<patternthreshold>20</patternthreshold>
+	<patternthreshold>120</patternthreshold>
 	<patternminconfidence>0.5</patternminconfidence>
 	<unscaledmarkerwidth>80</unscaledmarkerwidth>	
 	<framerate>25</framerate>
@@ -9,4 +9,5 @@
 	<height>480</height>
 	<mirror>true</mirror>
 	<downsampleratio>1</downsampleratio>
+	<markerUpdateThreshold>50</markerUpdateThreshold>
 </Configuration>

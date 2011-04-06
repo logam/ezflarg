@@ -25,6 +25,7 @@ package com.quilombo
 				, configuration.patternToBorderRatio
 				, configuration.unscaledMarkerWidth
 				, configuration.patternMinConfidence
+				, configuration.markerUpdateThreshold
 				);
 		}
 

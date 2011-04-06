@@ -71,6 +71,7 @@ package com.tchatcho {
 		protected var _patternToBorderRatio:Number 	= 50;
 		protected var _unscaledMarkerWidth:Number 	= 80;
 		protected var _minConfidence:Number 		= 0.5;
+		protected var _markerUpdateThreshold:Number	= 20;
 
 		/*private*/ protected var _funcStarted:Function;
 		/*private*/ protected var _funcAdded:Function;
@@ -89,6 +90,7 @@ package com.tchatcho {
 					, patternToBorderRatio:Number = 50
 					, unscaledMarkerWidth:Number = 80
 					, minConfidence:Number = 0.5
+					, markerUpdateThreshold:Number = 20
 					)
 		{
 			_width 			= width;
@@ -101,6 +103,7 @@ package com.tchatcho {
 			_isMirrored		= mirror;
 			_patternToBorderRatio	= patternToBorderRatio;
 			_unscaledMarkerWidth	= unscaledMarkerWidth;
+			_markerUpdateThreshold	= markerUpdateThreshold;
 			_minConfidence		= minConfidence;
 		}
 
@@ -137,6 +140,7 @@ package com.tchatcho {
 
 				// use Camera (default)
 				this.flarManager = new FLARManager(_pathToResources + CAMERA_PARAMS_PATH, patterns,_camSource);
+				this.flarManager.markerUpdateThreshold = _markerUpdateThreshold;
 				this.addChild(FLARCameraSource(this.flarManager.flarSource));
 
 				// begin listening for FLARMarkerEvents

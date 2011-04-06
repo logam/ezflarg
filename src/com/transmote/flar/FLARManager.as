@@ -45,8 +45,10 @@ package com.transmote.flar {
 		// if a detected marker is within this distance from an active marker,
 		// FLARManager considers the detected marker to be an update of the active marker.
 		// else, the detected marker is a new marker.
-		private static const MARKER_UPDATE_THRESHOLD:Number = 20;
+		// private static const MARKER_UPDATE_THRESHOLD:Number = 20;
 		
+		private var _markerUpdateThreshold:Number = 20;
+
 		private var _cameraParams:FLARParam;
 		private var _flarSource:IFLARSource;
 		private var _threshold:Number = 80;
@@ -113,6 +115,25 @@ package com.transmote.flar {
 		public function set threshold (val:uint) :void {
 			this._threshold = val;
 		}
+		
+		/**
+			if a detected marker is within this distance (in pixels) from an active marker,
+			FLARManager considers the detected marker to be an update of the active marker.
+			else, the detected marker is a new marker.
+		*/
+		public function get markerUpdateThreshold():Number
+		{
+			return _markerUpdateThreshold;
+		}
+		
+		/**
+			the new value is used in the next detectPattern call
+		*/
+		public function set markerUpdateThreshold( value:Number):void
+		{
+			_markerUpdateThreshold = value;
+		}
+
 		//-----</ACCESSORS>--------------------------------//
 		
 		
@@ -241,7 +262,7 @@ package com.transmote.flar {
 					activeMarker = this._activeMarkers[j];
 					if (detectedMarker._patternId == activeMarker._patternId) {
 						dist = Point.distance(detectedMarker.outline._centerpoint, activeMarker.outline._centerpoint);
-						if (dist < closestDist && dist < MARKER_UPDATE_THRESHOLD) {
+						if (dist < closestDist && dist < _markerUpdateThreshold) {
 							closestMarker = activeMarker;
 							closestDist = dist;
 						}
