@@ -10,18 +10,31 @@ package com.tchatcho.constructors {
 	import org.papervision3d.objects.DisplayObject3D;
 	
 	import org.papervision3d.materials.WireframeMaterial;
+	
+	import com.tchatcho.constructors.ILoadingEZFLAR;
 	import com.tchatcho.constructors.LoadingEZFLAR;
 	
 	//TODO: handle clicks in objects
 	//import org.papervision3d.events.InteractiveScene3DEvent;
 
-	public class CUBEconstructor extends DisplayObject3D {
-		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
+	public class CUBEconstructor extends DisplayObject3D 
+	{
+		private var _ldr:ILoadingEZFLAR = new LoadingEZFLAR();
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _cube:Cube;
-		public function CUBEconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) 
+		
+		public function CUBEconstructor( patternId:int
+					       , url:String = null
+					       , url2:String = null
+					       , objName:String = null
+					       , loader:ILoadingEZFLAR = null) 
 		{
+			if(loader != null)
+			{
+				_ldr = loader;
+			}
 			startLoader();
+
 			if (url2 != null)
 			{
 				var cubeMaterialBmp:BitmapFileMaterial = new BitmapFileMaterial(url2, true);

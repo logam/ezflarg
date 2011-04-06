@@ -38,7 +38,8 @@ package com.tchatcho {
 	//TODO: Loading all code, loading each model working
 
 	[SWF(width="640", height="480", frameRate="30", backgroundColor="#FFFFFF")]
-	public class EZflar extends Sprite {
+	public class EZflar extends Sprite 
+	{
 		//defaults paths to assets inside resources folder
 		
 		/*private*/ protected static const PATH_TO_MODELS:String = "models/";
@@ -95,16 +96,21 @@ package com.tchatcho {
 			this.init();
 			theStage.addChild(this);
 		};
-		/*private*/ protected function init () :void {
-			trace("EZFLAR 0.1(beta) is running!  :)\n keep calm and look busy!\n");
-			if(Camera.names.length > 0) {
+
+		/*private*/ protected function init () :void 
+		{
+			trace("[EZflar::init] EZFLAR 0.1(beta) is running!  :)\n keep calm and look busy!\n");
+			this.mirror();
+			if( isCameraAvailable() ) 
+			{
+				trace("[EZflar::init] camera available");
 				_camSource = new FLARCameraSource(_width, _height, _frameRate, _downSampleRatio)
 				// build list of FLARPatterns for FLARToolkit to detect
 				this.patterns = new Array();
 				for (var i:int = 0; i < _objects.length; i++) {
 					if(_objects[i][0][2] == undefined){_objects[i][0][2] = null}
 					if(_objects[i][1] == undefined){_objects[i][1] = null}
-					this.patterns.push(new FLARPattern(_pathToResources + PATTERN_PATH+ _objects[i][0][0], _patternResolution/*PATTERN_RESOLUTION*/));
+					this.patterns.push(new FLARPattern(_pathToResources + PATTERN_PATH+ _objects[i][0][0], _patternResolution));
 				}
 
 				// use Camera (default)
@@ -116,24 +122,38 @@ package com.tchatcho {
 				this.flarManager.addEventListener(FLARMarkerEvent.MARKER_UPDATED, this.onMarkerUpdated);
 				this.flarManager.addEventListener(FLARMarkerEvent.MARKER_REMOVED, this.onMarkerRemoved);
 				this.flarManager.addEventListener(Event.INIT, this.onFlarManagerInited);
-			} else {
+			} 
+			else 
+			{
+				trace("[EZflar::init] no camera available");
+								
 				_nocam = new NoCamera(_width,_height, _noCamMessage, _noCamColorTxt, _noCamColorBackground);				
-				addChild(_nocam)
-				if(this._isMirrored == false){
-					this.mirror();
-				}
+				this.addChild(_nocam);
 			}
+			//if(this._isMirrored == false)
+			//{
+			//	trace("[EZflar::init] mirror");
+			//	this.mirror();
+			//}
 		}
-		public function customizeNoCam(message:String, colorTxt:uint, colorBackground:uint):void{
-			_noCamMessage = message;
-			_noCamColorTxt = colorTxt;
+		public function customizeNoCam(message:String, colorTxt:uint, colorBackground:uint):void
+		{
+			_noCamMessage 	= message;
+			_noCamColorTxt 	= colorTxt;
 			_noCamColorBackground = colorBackground;
-			if(Camera.names.length < 1){
-				removeChild(_nocam)
-				_nocam = new NoCamera(_width,_height, _noCamMessage, _noCamColorTxt, _noCamColorBackground);
-				addChild(_nocam)
-			}
 			
+			if( !isCameraAvailable() )
+			{
+				trace("[EZflar::customizeNoCam] no camera available");
+				if( this.contains(_nocam) )
+				{
+					trace("[EZflar::customizeNoCam] remove nocam child");
+					this.removeChild(_nocam);
+				}
+				_nocam = new NoCamera(_width,_height, _noCamMessage, _noCamColorTxt, _noCamColorBackground);
+				trace("[EZflar::customizeNoCam] add nocam child");				
+				this.addChild(_nocam);
+			}			
 		}
 		public function mirror():void{
 			if(this._isMirrored == false){
@@ -169,6 +189,7 @@ package com.tchatcho {
 				_funcStarted();
 			}
 		}
+
 		/*private*/ protected function onMarkerAdded (evt:FLARMarkerEvent) :void {
 			this.base_model.addMarker(evt.marker);
 			if (_funcAdded != null){
@@ -244,6 +265,11 @@ package com.tchatcho {
 		protected function set patternResolution(value:uint):void
 		{
 			_patternResolution = value;
+		}
+
+		protected function isCameraAvailable():Boolean
+		{
+			return (Camera.names.length > 0)
 		}
 	}
 }

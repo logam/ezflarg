@@ -8,14 +8,27 @@ package com.tchatcho.constructors {
 	import flash.events.Event;
 
 	import org.papervision3d.objects.DisplayObject3D;
+
+	import com.tchatcho.constructors.ILoadingEZFLAR;
 	import com.tchatcho.constructors.LoadingEZFLAR;
 
-	public class MD2constructor extends MD2 {
-		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
+	public class MD2constructor extends MD2 
+	{
+		private var _ldr:ILoadingEZFLAR = new LoadingEZFLAR();
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _mMD2:MD2;
-		public function MD2constructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
 
+		public function MD2constructor( patternId:int
+					      , url:String = null
+					      , url2:String = null
+					      , objName:String = null
+					      , loader:ILoadingEZFLAR = null
+					      ) 
+		{
+			if(loader != null)
+			{
+				_ldr = loader;
+			}
 			startLoader();
 
 			this._mMD2 = new MD2();

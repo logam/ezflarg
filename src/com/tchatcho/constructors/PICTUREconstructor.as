@@ -1,7 +1,8 @@
 /**
  * @Author tcha-tcho
  */
-package com.tchatcho.constructors {
+package com.tchatcho.constructors 
+{
 	import org.papervision3d.objects.primitives.Plane;
 	import org.papervision3d.materials.WireframeMaterial;
 
@@ -11,24 +12,38 @@ package com.tchatcho.constructors {
 
 	import org.papervision3d.objects.DisplayObject3D;
 
-	// TEST
-	import com.quilombo.constructors.LoadingEzflarEx;
+	import com.tchatcho.constructors.ILoadingEZFLAR;
+	import com.tchatcho.constructors.LoadingEZFLAR;
 
-	public class PICTUREconstructor extends Plane {
-		//private var _ldr:LoadingEZFLAR = LoadingEZFLAR();
-		private var _ldr:LoadingEzflarEx = new LoadingEzflarEx();
-
-		private var _universe:DisplayObject3D = new DisplayObject3D();
+	public class PICTUREconstructor extends Plane 
+	{
+		private var _ldr:ILoadingEZFLAR 	= new LoadingEZFLAR();
+		private var _universe:DisplayObject3D 	= new DisplayObject3D();
 		private var _front_plane:Plane;
-		public function PICTUREconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
-			_ldr.init();
+
+		public function PICTUREconstructor( patternId:int
+						  , url:String = null
+						  , url2:String = null
+						  , objName:String = null
+						  , loader:ILoadingEZFLAR = null
+						  ) 
+		{
+			if(loader != null)
+			{
+				_ldr = loader;
+			}
+			
 			startLoader();
-			if (url != null){
+			
+			if (url != null)
+			{
 				var pictureMaterial:BitmapFileMaterial = new BitmapFileMaterial(url, true);
 				pictureMaterial.doubleSided = true;
 				pictureMaterial.addEventListener( FileLoadEvent.LOAD_COMPLETE , loaderComplete );
 				_front_plane = new Plane(pictureMaterial, 500, 500, 4, 4);
-			} else {
+			} 
+			else 
+			{
 				trace("YOU DO IT WRONG! :P, pls use picture like this:....push([['yourpattern', 'yourimage.jpg'],['a_optional_name']]);");
 				var wfm:WireframeMaterial = new WireframeMaterial(0xffff00);
 				wfm.doubleSided = true;

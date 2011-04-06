@@ -11,11 +11,18 @@ package com.tchatcho.constructors {
 	import org.papervision3d.materials.MovieMaterial;
 	import org.papervision3d.objects.DisplayObject3D;
 
+	import com.tchatcho.constructors.ILoadingEZFLAR;
+
 	public class TXT40constructor extends MovieClip {
 		private var _universe:DisplayObject3D = new DisplayObject3D();
-
-
-		public function TXT40constructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
+		
+		public function TXT40constructor( patternId:int
+						, url:String = null
+						, url2:String = null
+						, objName:String = null
+						, loader:ILoadingEZFLAR = null
+						) 
+		{
 			var cleanURL:String = url2.split("/").pop();
 			var child:Shape = new Shape();
 			child.graphics.beginFill(0xb3e600);

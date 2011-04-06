@@ -10,12 +10,15 @@ package com.tchatcho.constructors {
 	import org.papervision3d.objects.primitives.Plane;
 	import org.papervision3d.materials.MovieMaterial;
 	import org.papervision3d.objects.DisplayObject3D;
+	
+	import com.tchatcho.constructors.ILoadingEZFLAR;
 
-	public class LoadingEZFLAR extends MovieClip {
+	public class LoadingEZFLAR extends MovieClip implements ILoadingEZFLAR 
+	{
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 
-
-		public function LoadingEZFLAR() {
+		public function LoadingEZFLAR() 
+		{
 			var child:Shape = new Shape();
 			child.graphics.beginFill(0xCCCCCC);
 			child.graphics.lineStyle(2, 0xFFFFFF);
@@ -41,7 +44,8 @@ package com.tchatcho.constructors {
 			front_plane.x                        = 1;
 			this._universe.addChild(front_plane);
 		}
-		public function get ldrObject():DisplayObject3D{
+		public function get ldrObject():DisplayObject3D
+		{
 			return this._universe;
 		}
 	}

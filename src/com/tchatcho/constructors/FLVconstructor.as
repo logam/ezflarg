@@ -12,17 +12,30 @@ package com.tchatcho.constructors {
 
 	import org.papervision3d.objects.primitives.Plane;	
 	import org.papervision3d.objects.DisplayObject3D;
+
+	import com.tchatcho.constructors.ILoadingEZFLAR;
 	import com.tchatcho.constructors.LoadingEZFLAR;
 
-	public class FLVconstructor extends Video {
-		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
+	public class FLVconstructor extends Video 
+	{
+		private var _ldr:ILoadingEZFLAR = new LoadingEZFLAR();
 		private var _video:Video;
 		private var _stream:NetStream;
 		private var _connection:NetConnection;
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _front_plane:Plane;
 		
-		public function FLVconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
+		public function FLVconstructor( patternId:int
+					      , url:String = null
+					      , url2:String = null
+					      , objName:String = null
+					      , loader:ILoadingEZFLAR = null
+					      ) 
+		{
+			if(loader != null)
+			{
+				_ldr = loader;
+			}
 			startLoader();
 
 			// Create a NetConnection. 2-way _connection not necessary: connect to null

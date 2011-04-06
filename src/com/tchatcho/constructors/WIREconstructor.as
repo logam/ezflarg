@@ -6,12 +6,26 @@ package com.tchatcho.constructors {
 	import org.papervision3d.materials.WireframeMaterial;
 	import org.papervision3d.objects.DisplayObject3D;
 
-	public class WIREconstructor extends Plane {
-		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
+	import com.tchatcho.constructors.ILoadingEZFLAR;	
+	import com.tchatcho.constructors.LoadingEZFLAR;
+	
+	public class WIREconstructor extends Plane 
+	{
+		private var _ldr:ILoadingEZFLAR = new LoadingEZFLAR();
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _wire:Plane;
-		public function WIREconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) 
+		
+		public function WIREconstructor( patternId:int
+					       , url:String = null
+					       , url2:String = null
+					       , objName:String = null
+					       , loader:ILoadingEZFLAR = null
+					       ) 
 		{
+			if(loader != null)
+			{
+				_ldr = loader;
+			}
 			startLoader();
 			var wfm:WireframeMaterial;
 

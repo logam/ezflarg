@@ -13,15 +13,17 @@ package com.tchatcho.constructors {
 	import com.tchatcho.constructors.LoadingEZFLAR;
 	
 	import flash.xml.XMLDocument;
-    import flash.xml.XMLNode;
-    import flash.xml.XMLNodeType;
+    	import flash.xml.XMLNode;
+    	import flash.xml.XMLNodeType;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
-
+	import com.tchatcho.constructors.ILoadingEZFLAR;
+	import com.tchatcho.constructors.LoadingEZFLAR;
 	
-	public class TWITTERconstructor extends MovieClip {
-		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
+	public class TWITTERconstructor extends MovieClip 
+	{
+		private var _ldr:ILoadingEZFLAR = new LoadingEZFLAR();
 		private var _loader:Loader = new Loader();
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _front_plane:Plane;
@@ -30,8 +32,18 @@ package com.tchatcho.constructors {
 		private var _txt:TextField = new TextField();
 		
 
-		public function TWITTERconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
+		public function TWITTERconstructor( patternId:int
+						  , url:String = null
+						  , url2:String = null
+						  , objName:String = null
+						  , loader:ILoadingEZFLAR = null) 
+		{
+			if(loader != null)
+			{
+				_ldr = loader;
+			}
 			startLoader();
+			
 			var cleanURL:String = url2.split("/").pop();
 			trace("accessing twitter of " + cleanURL);
 			

@@ -9,15 +9,28 @@ package com.tchatcho.constructors {
 	import org.papervision3d.objects.primitives.Plane;
 	import org.papervision3d.materials.MovieMaterial;
 	import org.papervision3d.objects.DisplayObject3D;
+	
+	import com.tchatcho.constructors.ILoadingEZFLAR;
 	import com.tchatcho.constructors.LoadingEZFLAR;
 
-	public class SWFconstructor extends MovieClip {
-		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
+	public class SWFconstructor extends MovieClip 
+	{
+		private var _ldr:ILoadingEZFLAR = new LoadingEZFLAR();
 		private var _loader:Loader = new Loader();
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _front_plane:Plane;
 
-		public function SWFconstructor(patternId:int, url:String = null, url2:String = null, objName:String = null) {
+		public function SWFconstructor( patternId:int
+					      , url:String = null
+					      , url2:String = null
+					      , objName:String = null
+					      , loader:ILoadingEZFLAR = null
+					      ) 
+		{
+			if(loader != null)
+			{
+				_ldr = loader;
+			}
 			startLoader();
 
 			var request:URLRequest=new URLRequest(url);

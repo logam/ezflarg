@@ -20,9 +20,12 @@ package com.tchatcho.constructors {
 	import flash.media.SoundTransform;
 	
 	import com.tchatcho.constructors.MP3Events;
+	import com.tchatcho.constructors.ILoadingEZFLAR;
+	import com.tchatcho.constructors.LoadingEZFLAR;
 
-	public class MP3constructor extends MovieClip {
-		private var _ldr:LoadingEZFLAR = new LoadingEZFLAR();
+	public class MP3constructor extends MovieClip 
+	{
+		private var _ldr:ILoadingEZFLAR = new LoadingEZFLAR();
 		private var _loader:Loader = new Loader();
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		private var _front_plane:Plane;
@@ -32,7 +35,18 @@ package com.tchatcho.constructors {
 		private var _soundTrans:SoundTransform = new SoundTransform();
 		// private var mp3events:MP3Events = new MP3Events();
 
-		public function MP3constructor(patternId:int, mp3events:MP3Events, url:String = null, url2:String = null, objName:String = null) {
+		public function MP3constructor( patternId:int
+					      , mp3events:MP3Events
+					      , url:String = null
+					      , url2:String = null
+					      , objName:String = null
+					      , loader:ILoadingEZFLAR = null
+					      ) 
+		{
+			if(loader != null)
+			{
+				_ldr = loader;
+			}
 			startLoader();
 			
 

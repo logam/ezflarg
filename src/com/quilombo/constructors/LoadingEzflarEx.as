@@ -6,27 +6,26 @@ package com.quilombo.constructors
 	import flash.display.MovieClip;
 	import flash.display.Shape;
 
+	import com.tchatcho.constructors.ILoadingEZFLAR;
+
 	import org.papervision3d.objects.primitives.Plane;
 	import org.papervision3d.materials.MovieMaterial;
 	import org.papervision3d.objects.DisplayObject3D;
 
-	public class LoadingEzflarEx extends MovieClip 
+	public class LoadingEzflarEx extends MovieClip implements ILoadingEZFLAR
 	{
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 
 		/**
-			later on we pass an initializer visitor in order generically set the layout of this class
-			LoadingEzflarEx(initializer:LoadingInitializer)
-			{
-				initializer.init(this, _universe);
-			}
+
 		*/
 		public function LoadingEzflarEx()
 		{
 			super();
+			init();
 		}
 		
-		public function	init():void
+		protected function	init():void
 		{
 			var child:Shape = new Shape();
 			child.graphics.beginFill(0xCC0066/*0xCCCCCC*/, 0.25 /*alpha*/);

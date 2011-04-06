@@ -7,23 +7,11 @@ package com.quilombo
 	import com.tchatcho.EZflar;
 
 	import com.quilombo.ConfigHolder;
+	import com.quilombo.BaseModelEx;
+	import com.quilombo.constructors.LoadingEzflarEx;
 
 	public class EZflarEx extends EZflar
 	{
-/*
-		public function EZflarEx ( 	objects:Array,
-					   	width:int = 640,
-					   	height:int = 480,
-						frameRate:Number = 30,
-						downSampleRatio:Number = 0.5,
-						res:uint = 16,
-						thresh:uint = 20,
-						mirror:Boolean = true
-					  )
-		{
-			super(objects, width, height, frameRate, downSampleRatio, res, thresh, mirror);
-		}
-*/
 		public function EZflarEx ( configuration:ConfigHolder )
 		{
 			super	( configuration.objects
@@ -39,13 +27,14 @@ package com.quilombo
 
 		private function onFlarManagerInitiated (evt:Event) :void 
 		{
-			super.base_model = new Base_model(	super._objects,
+			super.base_model = new BaseModelEx(	super._objects,
 								super.patterns.length,
 								super.flarManager.cameraParams,
 								viewWidth(),
 								viewHeight(),
 								super._pathToResources,
-								PATH_TO_MODELS);
+								PATH_TO_MODELS,
+								new LoadingEzflarEx());
 			super.addChild(super.base_model);
 			
 			if (super._funcStarted != null){
@@ -58,17 +47,18 @@ package com.quilombo
 			// call base class first
 			super.init();
 
-			// set the pattern brightness threshold
-			super.flarManager.threshold = super._patternThreshold;
-			
-			// remove the init event listener registered by the base class and register the one of this class 
-			// which uses the extended version of the Base_model > BaseModelEx
-			if(Camera.names.length > 0) 
+			// only remove listeners if camera is availble. otherwise, the event listeners are
+			// not registered. 
+			if( super.isCameraAvailable() )
 			{
+				// set the pattern brightness threshold
+				super.flarManager.threshold = super._patternThreshold;
+			
+				// remove the init event listener registered by the base class and register the one of this class 
+				// which uses the extended version of the Base_model > BaseModelEx
 				flarManager.removeEventListener(Event.INIT, super.onFlarManagerInited);				
 				flarManager.addEventListener(Event.INIT, this.onFlarManagerInitiated);
 			}
-			
 		}
 	}
 } 

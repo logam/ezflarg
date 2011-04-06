@@ -29,36 +29,50 @@ package com.tchatcho {
 	import com.tchatcho.constructors.MP3Events;
 	import com.tchatcho.constructors.TXT40constructor;
 	import com.tchatcho.constructors.URLconstructor;
-	
-	public class Base_model extends Sprite {//Or BasicView
+		
+	import com.tchatcho.constructors.ILoadingEZFLAR;
+
+	public class Base_model extends Sprite 
+	{	//Or BasicView
 
 		//initiate global vars
-	private var _viewport3D:Viewport3D;
-	private var _camera3D:FLARCamera3D;
-	private var _scene3D:Scene3D;
-	private var _renderEngine:LazyRenderEngine;
-	private var _pointLight3D:PointLight3D;
+		private var _viewport3D:Viewport3D;
+		private var _camera3D:FLARCamera3D;
+		private var _scene3D:Scene3D;
+		private var _renderEngine:LazyRenderEngine;
+		private var _pointLight3D:PointLight3D;
 
-	private var _objects:Array;
-	private var _numPatterns:uint;
-	private var _pathToResources:String;
-	private var _modelsPath:String;
-	private var _objectsToAdd:Array = new Array();
-	private var _markersByPatternId:Array;// FLARMarkers and Models, arranged by patternId
-	private var _newCount:Date;
-	private var _oldCount:Date;
-	private var _firstLock:Boolean;
+		private var _objects:Array;
+		private var _numPatterns:uint;
+		private var _pathToResources:String;
+		private var _modelsPath:String;
+		private var _objectsToAdd:Array = new Array();
+		private var _markersByPatternId:Array;// FLARMarkers and Models, arranged by patternId
+		private var _newCount:Date;
+		private var _oldCount:Date;
+		private var _firstLock:Boolean;
 	
-	private var mp3events:MP3Events = new MP3Events();
+		private   var mp3events:MP3Events 	= new MP3Events();
+		protected var _ldr:ILoadingEZFLAR 	= null;
 
-	public function Base_model (objects:Array, numPatterns:uint, cameraParams:FLARParam, viewportWidth:Number, viewportHeight:Number, pathToResources:String, modelsPath:String) {
-		this._objects = objects;
-		this._numPatterns = numPatterns;
-		this._pathToResources = pathToResources;
-		this._modelsPath = modelsPath;
-		this.init();
-		this.initPapervisionEnvironment(cameraParams, viewportWidth, viewportHeight);
-	}
+		public function Base_model ( objects:Array
+					   , numPatterns:uint
+					   , cameraParams:FLARParam
+					   , viewportWidth:Number
+					   , viewportHeight:Number
+					   , pathToResources:String
+					   , modelsPath:String
+					   , loader:ILoadingEZFLAR = null) 
+		{
+			this._objects 		= objects;
+			this._numPatterns 	= numPatterns;
+			this._pathToResources 	= pathToResources;
+			this._modelsPath 	= modelsPath;
+			this._ldr 		= loader; // can be null, no check necessary
+
+			this.init();
+			this.initPapervisionEnvironment(cameraParams, viewportWidth, viewportHeight);
+		}
 
 	public function addMarker (marker:FLARMarker) :void {
 		if(_firstLock == false){
@@ -114,16 +128,20 @@ package com.tchatcho {
 			}
 			/*private*/ protected function updateModels () :void {
 				// update all Models containers according to the transformation matrix in their associated FLARMarkers
-				for (var i:int = 0; i < this._markersByPatternId.length; i++){
-					this._markersByPatternId[i][2].transform = FLARPVGeomUtils.translateFLARMatrixToPVMatrix(this._markersByPatternId[i][1].transformMatrix);
+				for (var i:int = 0; i < this._markersByPatternId.length; i++)
+				{
+					this._markersByPatternId[i][2].transform 
+						= FLARPVGeomUtils.translateFLARMatrixToPVMatrix(this._markersByPatternId[i][1].transformMatrix);
 				}
 			}
-			private function init () :void {
+			private function init () :void 
+			{
 				this._markersByPatternId = new Array();
 				_firstLock = true;
 			}
 
-			private function initPapervisionEnvironment (cameraParams:FLARParam, viewportWidth:Number, viewportHeight:Number) :void {
+			private function initPapervisionEnvironment (cameraParams:FLARParam, viewportWidth:Number, viewportHeight:Number) :void 
+			{
 				this._scene3D = new Scene3D();
 				this._camera3D = new FLARCamera3D(cameraParams);
 				this._viewport3D = new Viewport3D(viewportWidth, viewportHeight);
@@ -142,68 +160,77 @@ package com.tchatcho {
 				this.updateModels();
 				this._renderEngine.render();
 			}
+
+			protected function getExtension(url:String):String
+			{
+				var ext:String = url.toString();
+				ext = ext.substring(ext.length - 3,ext.length).toUpperCase();
+				return ext;
+			}
+
 			/*private*/ protected function placeModels(patternId:int, url:String = null, url2:String = null, objName:String = null):DisplayObject3D{
-				var _format:String = url.toString();
-				_format = _format.substring(_format.length - 3,_format.length).toUpperCase();
+				// var _format:String = url.toString();
+				// _format = _format.substring(_format.length - 3,_format.length).toUpperCase();
+				var _format:String = getExtension(url);				
 				switch (_format){
 					
 					case "SWF" ://*.swf
-					var swf:SWFconstructor = new SWFconstructor(patternId, url, url2, objName)
+					var swf:SWFconstructor = new SWFconstructor(patternId, url, url2, objName, _ldr)
 					return containerReady(swf.object);
 					break;
 
 					case "FLV" ://*.flv
-					var flv:FLVconstructor = new FLVconstructor(patternId, url, url2, objName);
+					var flv:FLVconstructor = new FLVconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(flv.object);
 					break;
 
 					case "DAE" : //*.dae
-					var dae:DAEconstructor = new DAEconstructor(patternId, url, url2, objName);
+					var dae:DAEconstructor = new DAEconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(dae.object);
 					break;
 
 					case "MD2" ://*.md2
-					var md2:MD2constructor = new MD2constructor(patternId, url, url2, objName);
+					var md2:MD2constructor = new MD2constructor(patternId, url, url2, objName, _ldr);
 					return containerReady(md2.object);
 					break;
 
 					case "UBE" ://cube
-					var cube:CUBEconstructor = new CUBEconstructor(patternId, url, url2, objName);
+					var cube:CUBEconstructor = new CUBEconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(cube.object);
 					break;
 
 					case "JPG" ://picture jpg
-					var jpg:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
+					var jpg:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(jpg.object);
 					break;
 
 					case "PEG" ://picture jpeg
-					var jpeg:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
+					var jpeg:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(jpeg.object);
 					break;
 
 					case "GIF" ://picture gif
-					var gif:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
+					var gif:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(gif.object);
 					break;
 
 					case "PNG" ://picture png
-					var png:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName);
+					var png:PICTUREconstructor = new PICTUREconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(png.object);
 					break;
 					
 					case "MP3" ://*.mp3
-					var mp3:MP3constructor = new MP3constructor(patternId, mp3events, url, url2, objName);
+					var mp3:MP3constructor = new MP3constructor(patternId, mp3events, url, url2, objName, _ldr);
 					return containerReady(mp3.object);
 					break;
 
 					case "IRE" ://wire
-					var wire:WIREconstructor = new WIREconstructor(patternId, url, url2, objName);
+					var wire:WIREconstructor = new WIREconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(wire.object);
 					break;
 
 					case "TER" ://twitter
-					var twitter:TWITTERconstructor = new TWITTERconstructor(patternId, url, url2, objName);
+					var twitter:TWITTERconstructor = new TWITTERconstructor(patternId, url, url2, objName, _ldr);
 					return containerReady(twitter.object);
 					break;
 					
@@ -241,7 +268,7 @@ package com.tchatcho {
 					break;
 				}
 			}
-			private function containerReady(object:DisplayObject3D):DisplayObject3D{
+			/*private*/ protected function containerReady(object:DisplayObject3D):DisplayObject3D{
 				var container:DisplayObject3D = new DisplayObject3D();//i dont know why we need a container, :(
 				container.addChild(object);
 				this._scene3D.addChild(container);
