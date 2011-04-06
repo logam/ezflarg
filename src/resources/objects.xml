@@ -1,0 +1,52 @@
+<Library>
+	<MediaElement>
+		<pattern>marker_001.pat</pattern>
+		<media>marker_display_001.jpg</media>
+		<label>display001</label>
+	</MediaElement>
+
+	<MediaElement>
+		<pattern>marker_002.pat</pattern>
+		<media>marker_display_002.jpg</media>
+		<label>display002</label>
+	</MediaElement>
+
+	<MediaElement>
+		<pattern>marker_32_003.pat</pattern>
+		<media>marker_display_003.jpg</media>
+		<label>display003</label>
+	</MediaElement>
+
+	<MediaElement>
+		<pattern>marker_004.pat</pattern>
+		<media>marker_display_004.jpg</media>
+		<label>display004</label>
+	</MediaElement>
+<!--
+	<MediaElement>
+		<pattern>marker_005.pat</pattern>
+		<media>marker_display_005.jpg</media>
+		<label>display005</label>
+	</MediaElement>
+-->	
+	<MediaElement>
+		<pattern>markersquare_001.pat</pattern>
+		<media>blaergCover.jpg</media>
+		<label>blaerg</label>
+	</MediaElement>
+
+	<TextElement>
+		<pattern>marker_005.pat</pattern>
+		<type>text</type>
+		<content>ein kurzer info text</content>
+		<label>los</label>
+	</TextElement>
+<!--
+	<TextElement>
+		<pattern>markersquare_003.pat</pattern>
+		<type>url</type>
+		<content>http://www.arte.tv</content>
+		<label>arte</label>
+	</TextElement>
+-->
+</Library>
