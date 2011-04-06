@@ -49,17 +49,18 @@ package
 			{
 				// _ezflar.addModelTo([0,"Example_FLV.flv"], ["myflv"]);
 				// _ezflar.addModelTo([0,"twitter", "ezflar"], ["mytwitter"]);
-				_ezflar.addModelTo([0,"text", "zone ar"], ["textStart"]);
+				// _ezflar.addModelTo([0,"text", "zone ar"], ["textStart"]);
+				trace("EZflarg::onStarted");
 			});
 			_ezflar.onAdded(function(marker:FLARMarkerEvent):void 
 			{
-				//_ezflar.getObject(0,"mygif").rotationX = 90;
-				_ezflar.getObject(0,"los").rotationX = 90;
-				trace(">>>>>>>>>>>>> added: " + marker.marker.patternId);
+				// _ezflar.getObject(0,"mygif").rotationX = 90;
+				// _ezflar.getObject(0,"los").rotationX = 90;
+				trace("EZflarg::onAdded: " + marker.marker.patternId);
 			});
 			_ezflar.onUpdated(function(marker:FLARMarkerEvent):void 
 			{
-				trace("["+ marker.marker.patternId+"]>>" +
+				trace("EZflarg::onUpdated: ["+ marker.marker.patternId+"]>>" +
 					  "X:" + marker.x() + " || " +
 					  "Y:" + marker.y() + " || " +
 					  "Z:" + marker.z() + " || " +
@@ -70,7 +71,7 @@ package
 			});
 			_ezflar.onRemoved(function(marker:FLARMarkerEvent):void 
 			{
-				trace(">>>>>>>>>>>>> removed: " + marker.marker.patternId);
+				trace("EZflarg::onRemoved: " + marker.marker.patternId);
 			});	
 		}
 
@@ -98,6 +99,7 @@ package
 		{
 			var cfgLoaderXML:ConfigLoaderXML = new ConfigLoaderXML();
 			_configuration = cfgLoaderXML.load(e.target.data) as ConfigHolder;
+			trace( _configuration.asString() ); // for debug purpose only
 		}	
 
 		public function EZflarg() 

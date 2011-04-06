@@ -21,8 +21,11 @@ package com.quilombo
 			configuration.patternThreshold		= _xml.patternthreshold.text();
 			configuration.frameRate			= _xml.framerate.text();
 			configuration.downsampleRatio		= _xml.downsampleratio.text();
-			configuration.mirror			= _xml.mirror.text().toLowerCase == "true";
-
+			configuration.mirror			= _xml.mirror.text();
+			configuration.patternToBorderRatio	= _xml.patternborderratio.text();
+			configuration.patternMinConfidence	= _xml.patternminconfidence.text();
+			configuration.unscaledMarkerWidth	= _xml.unscaledmarkerwidth.text();
+			
 			return configuration;
 		}
 	} 

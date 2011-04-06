@@ -66,8 +66,11 @@ package com.tchatcho {
 		
 		/*private*/protected var _pathToResources:String = new String();
 		
-		protected var _patternResolution:uint = 16;
-		protected var _patternThreshold:uint = 80;
+		protected var _patternResolution:uint 		= 16;
+		protected var _patternThreshold:uint		= 80;
+		protected var _patternToBorderRatio:Number 	= 50;
+		protected var _unscaledMarkerWidth:Number 	= 80;
+		protected var _minConfidence:Number 		= 0.5;
 
 		/*private*/ protected var _funcStarted:Function;
 		/*private*/ protected var _funcAdded:Function;
@@ -75,23 +78,34 @@ package com.tchatcho {
 		/*private*/ protected var _funcRemoved:Function;
 
 
-		public function EZflar (objects:Array,
-								 width:int = 640,
-								 height:int = 480,
-								 frameRate:Number = 30,
-								 downSampleRatio:Number = 0.5,
-								 res:uint = 16,
-								 thresh:uint = 20,
-								 mirror:Boolean = true){
-			_width = width;
-			_height = height;
-			_frameRate = frameRate;
-			_downSampleRatio = downSampleRatio;
-			_objects = objects;
-			_patternResolution = res;
-			_patternThreshold = thresh;
+		public function EZflar  ( objects:Array
+					, width:int = 640
+					, height:int = 480
+					, frameRate:Number = 30
+					, downSampleRatio:Number = 0.5
+					, res:uint = 16
+					, thresh:uint = 20
+					, mirror:Boolean = true
+					, patternToBorderRatio:Number = 50
+					, unscaledMarkerWidth:Number = 80
+					, minConfidence:Number = 0.5
+					)
+		{
+			_width 			= width;
+			_height 		= height;
+			_frameRate 		= frameRate;
+			_downSampleRatio	= downSampleRatio;
+			_objects 		= objects;
+			_patternResolution 	= res;
+			_patternThreshold 	= thresh;
+			_isMirrored		= mirror;
+			_patternToBorderRatio	= patternToBorderRatio;
+			_unscaledMarkerWidth	= unscaledMarkerWidth;
+			_minConfidence		= minConfidence;
 		}
-		public function initializer(theStage:*, newPath:String = "./resources/"):void{
+
+		public function initializer(theStage:*, newPath:String = "./resources/"):void
+		{
 			this._pathToResources = newPath;
 			this.init();
 			theStage.addChild(this);
@@ -100,7 +114,7 @@ package com.tchatcho {
 		/*private*/ protected function init () :void 
 		{
 			trace("[EZflar::init] EZFLAR 0.1(beta) is running!  :)\n keep calm and look busy!\n");
-			this.mirror();
+			//this.mirror();
 			if( isCameraAvailable() ) 
 			{
 				trace("[EZflar::init] camera available");
@@ -110,7 +124,15 @@ package com.tchatcho {
 				for (var i:int = 0; i < _objects.length; i++) {
 					if(_objects[i][0][2] == undefined){_objects[i][0][2] = null}
 					if(_objects[i][1] == undefined){_objects[i][1] = null}
-					this.patterns.push(new FLARPattern(_pathToResources + PATTERN_PATH+ _objects[i][0][0], _patternResolution));
+					this.patterns.push(
+    						  new FLARPattern(
+							  _pathToResources + PATTERN_PATH + _objects[i][0][0]
+							, _patternResolution
+							, _patternToBorderRatio
+							, _unscaledMarkerWidth
+							, _minConfidence 
+							)
+						);
 				}
 
 				// use Camera (default)
@@ -130,11 +152,11 @@ package com.tchatcho {
 				_nocam = new NoCamera(_width,_height, _noCamMessage, _noCamColorTxt, _noCamColorBackground);				
 				this.addChild(_nocam);
 			}
-			//if(this._isMirrored == false)
-			//{
-			//	trace("[EZflar::init] mirror");
-			//	this.mirror();
-			//}
+			if(this._isMirrored == false)
+			{
+				trace("[EZflar::init] mirror");
+				this.mirror();
+			}
 		}
 		public function customizeNoCam(message:String, colorTxt:uint, colorBackground:uint):void
 		{
@@ -257,15 +279,15 @@ package com.tchatcho {
 			return _patternThreshold;
 		}
 
-		protected function set patternThreshold(value:uint):void
+		public function set patternThreshold(value:uint):void
 		{
 			_patternThreshold = value;
 		}
 
-		protected function set patternResolution(value:uint):void
+		public function set patternResolution(value:uint):void
 		{
 			_patternResolution = value;
-		}
+		} 
 
 		protected function isCameraAvailable():Boolean
 		{

@@ -22,6 +22,9 @@ package com.quilombo
 				, configuration.patternResolution
 				, configuration.patternThreshold
 				, configuration.mirror
+				, configuration.patternToBorderRatio
+				, configuration.unscaledMarkerWidth
+				, configuration.patternMinConfidence
 				);
 		}
 

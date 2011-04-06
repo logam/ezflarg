@@ -1,6 +1,9 @@
 <Configuration>
-	<patternthreshold>100</patternthreshold>
 	<patternresolution>16</patternresolution>
+	<patternborderratio>50</patternborderratio>
+	<patternthreshold>20</patternthreshold>
+	<patternminconfidence>0.5</patternminconfidence>
+	<unscaledmarkerwidth>80</unscaledmarkerwidth>	
 	<framerate>25</framerate>
 	<width>640</width>
 	<height>480</height>
