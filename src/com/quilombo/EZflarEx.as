@@ -53,7 +53,7 @@ package com.quilombo
 
 			// only remove listeners if camera is availble. otherwise, the event listeners are
 			// not registered. 
-			if( super.isCameraAvailable() )
+			if( isCameraAvailable() )
 			{
 				// set the pattern brightness threshold
 				super.flarManager.threshold = super._patternThreshold;

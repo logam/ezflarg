@@ -1,13 +1,80 @@
+<!-- 	this config file must be located under the resources folder
+	all other configurations, patterns and media elements are
+	located under the resources folder as well.
+-->
+
 <Configuration>
+	<!-- 	the number of segements of a marker used to create the .pat-files from a marker image
+		can be [4, 8, 16, 32, 64] default [16]
+		this number corresponds to the number of segments used for creation of the pat-files. it
+		is currently assumed that all pat-files uses the same number of segments
+		if this value is set to another value then the used on, markers won't be detected 
+	-->
 	<patternresolution>16</patternresolution>
+
+	<!--	a ratio that indicates how much area of a marker file was used to create the corresponding pat-file. 
+		range from [0, 100] default [50]  
+		this number corresponds to the ratio used for creation of the pat-files. it
+		is currently assumed that all pat-files uses the same ratio
+		if this value is set to another value then the used on, markers won't be detected
+	-->
 	<patternborderratio>50</patternborderratio>
-	<patternthreshold>120</patternthreshold>
-	<patternminconfidence>0.5</patternminconfidence>
+
+	<!-- 	the width of a marker in milimeter 
+		[>0] default [80mm] 
+		this number corresponds to the real size of the marker image. is is currently assumed that
+		all pat-files uses the same width. if this value is set to another value then the used on, 
+		markers won't be detected
+	-->
 	<unscaledmarkerwidth>80</unscaledmarkerwidth>	
+	
+	<!--	an image intesnity threshold used for image detection. 
+		range from [0,255] default [80] 
+		a higher threshold may lead to a better marker detection but can also lead to no detection
+		at all, depending on the environment, light, etc, the camera is used in
+	-->
+	<patternthreshold>120</patternthreshold>
+
+	<!-- 	the minimum confidence level used to decide whether a marker is correctly detected
+		range from [0,1] default [0.5]
+		a higher value may reduce detection errors, ie. when to similar markers are used but 
+		may also destabalize detection in general
+	-->
+	<patternminconfidence>0.5</patternminconfidence>
+	
+	<!-- 	the framerate of the came image in fps - frames per seconds. 
+		default [30]
+	-->
 	<framerate>25</framerate>
+	
+	<!-- 	the width of the camera screen in pixels. 
+		default [640]
+	-->
 	<width>640</width>
+	
+	<!-- 	the height of the camera screen in pixels. 
+		default [480]
+	-->
 	<height>480</height>
+
+	<!-- 	mirror the camera image 
+		can be [true, false]
+	-->
 	<mirror>true</mirror>
+
+	<!-- 	scaling factor for camera resoultion 
+		can be [0 - 1] default [0.6]
+		a value of 1 indicates the original camera resultion, thus no scaling is applied
+		a value of smaller 1 indicates a downsampling of the camera resoultion, thus the image gets poorer and rougher
+	-->
 	<downsampleratio>1</downsampleratio>
+
+	<!--	the distance treshold of a marker in pixels 
+		can be [>0] default [20 pixels] 
+		a higher value means that a marker is not going to be redected too often if the
+		camera moves, thus the marker display is more stable. the distance indicates the
+		amount of pixels necessary to redetect a the current or a new marker, ie. when
+		the camera moves
+	-->
 	<markerUpdateThreshold>50</markerUpdateThreshold>
 </Configuration>

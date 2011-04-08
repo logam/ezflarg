@@ -117,8 +117,16 @@ package com.tchatcho {
 		/*private*/ protected function init () :void 
 		{
 			trace("[EZflar::init] EZFLAR 0.1(beta) is running!  :)\n keep calm and look busy!\n");
-			//this.mirror();
-			if( isCameraAvailable() ) 
+			if( !isCameraAvailable() ) 
+			{
+				trace("[EZflar::init] no camera available");
+								
+				// var messageNoCam:String = "camera is not supported on this platform" + Camera.names;
+				// _nocam = new NoCamera(_width,_height, messageNoCam, _noCamColorTxt, _noCamColorBackground);
+				_nocam = new NoCamera(_width,_height, _noCamMessage, _noCamColorTxt, _noCamColorBackground);				
+				this.addChild(_nocam);
+			} 
+			else 
 			{
 				trace("[EZflar::init] camera available");
 				_camSource = new FLARCameraSource(_width, _height, _frameRate, _downSampleRatio)
@@ -148,13 +156,6 @@ package com.tchatcho {
 				this.flarManager.addEventListener(FLARMarkerEvent.MARKER_UPDATED, this.onMarkerUpdated);
 				this.flarManager.addEventListener(FLARMarkerEvent.MARKER_REMOVED, this.onMarkerRemoved);
 				this.flarManager.addEventListener(Event.INIT, this.onFlarManagerInited);
-			} 
-			else 
-			{
-				trace("[EZflar::init] no camera available");
-								
-				_nocam = new NoCamera(_width,_height, _noCamMessage, _noCamColorTxt, _noCamColorBackground);				
-				this.addChild(_nocam);
 			}
 			if(this._isMirrored == false)
 			{
@@ -293,6 +294,21 @@ package com.tchatcho {
 			_patternResolution = value;
 		} 
 
+		public function get availableCameras():Array
+		{
+			return Camera.names;
+		}
+/*
+		public function get currentCamera():String
+		{
+			return Camera.getCamera().name;
+		}
+
+		public function get isCameraSupported():Boolean
+		{
+			return Camera.isSupported;
+		}
+*/
 		protected function isCameraAvailable():Boolean
 		{
 			return (Camera.names.length > 0)

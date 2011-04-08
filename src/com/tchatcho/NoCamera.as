@@ -57,7 +57,7 @@ package com.tchatcho
 			// noCamMsg.embedFonts	= true;
 			
 			var format:TextFormat   = new TextFormat();
-			format.size             = width/20;
+			format.size             = width/30;
 			format.align            = "center";
 			format.color		= colorTxt;
 			// format.font 		= "Verdana";
@@ -73,14 +73,14 @@ package com.tchatcho
 		        var myFilters:Array = new Array();
 		        myFilters.push(filter);
 		        filters = myFilters;  
-
+/*
 			var front_material:MovieMaterial     = new MovieMaterial(this, true);
 			front_material.doubleSided           = true;
 			var front_plane:Plane = new Plane(front_material, width - 50, height/5, 2, 2);
 			//front_plane.scale                    = 0.2;
 			front_plane.x                        = 1;
 			this._universe.addChild(front_plane);        
-			
+*/			
 			//TODO: add support to no cam with a swf, PC problems(im a mac)
 			/*var ldr:Loader = new Loader();
 			var urlReq:URLRequest = new URLRequest(LOADINGPATH);

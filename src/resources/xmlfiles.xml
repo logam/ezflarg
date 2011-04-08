@@ -1,0 +1,17 @@
+<xmlfiles>
+	<!-- 	the xml file that describes thes applications configuration parameters
+		the file must be located in the "resources" folder
+	-->
+	<config>config.xml</config>
+	
+	<!-- 	the xml file that describes the marker patterns and the corresponding
+		media elements that gets invoked on marker detection. the file must
+		be located in the "resources" folder
+	-->
+	<objects>objects.xml</objects>
+	
+	<!-- 	the ml file that describes the mode in which the application is runing
+		currently not used		
+	-->
+	<mode>mode.xml</mode>
+</xmlfiles>

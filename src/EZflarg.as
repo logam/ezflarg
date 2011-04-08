@@ -6,24 +6,45 @@ package
 	import flash.net.URLLoader;	
 	import flash.net.URLRequest;
 	import flash.display.MovieClip;
+	import flash.media.Camera;
+	import flash.text.TextField;
 
 	import mx.utils.ObjectUtil;
 
-	import com.tchatcho.EZflar;//tcha-tcho.com
+	import com.tchatcho.EZflar;	//tcha-tcho.com
+	import com.tchatcho.NoCamera;
 	import com.transmote.flar.FLARMarkerEvent;	
 	
 	// own stuff
 	import com.quilombo.constructors.LoadingEzflarEx;
+
+	import com.quilombo.display.StartScreen;
+	import com.quilombo.display.StartScreenLayout;
+	import com.quilombo.display.GenericButton;
+
 	import com.quilombo.EZflarEx;
 	import com.quilombo.ConfigHolder;
 	import com.quilombo.ConfigLoaderXML;
 	import com.quilombo.PatternLoaderXML;
+	import com.quilombo.FileLoaderXML;
+
+	import flash.external.ExternalInterface;
+
 
 	public class EZflarg extends MovieClip 
 	{
 		protected var _ezflar:EZflarEx;
 		protected var _symbols:Array = new Array();
 		protected var _configuration:ConfigHolder;
+		protected var _externalHtmlCallback:Function = getTextFromJavaScript;
+
+		protected var _startScreen:StartScreen;
+		
+		protected var _resourcePath:String 	= "./resources/";
+		protected var _filesFile:String		= _resourcePath + "xmlfiles.xml";		
+		protected var _configFile:String;
+		protected var _patternFile:String;
+		protected var _modeFile:String;
 
 		/**
 			the event function that gets called on completion of reading the objects.xml file.
@@ -42,7 +63,7 @@ package
 			trace("initialize ezflar");
 			_ezflar = new EZflarEx(_configuration);
 			
-			_ezflar.initializer(stage, "./resources/");
+			_ezflar.initializer(stage, _resourcePath);
 			_ezflar.customizeNoCam("sorry no cam...", 0xFFFFFF, 0x444444 );			
 
 			_ezflar.onStarted(function():void 
@@ -102,21 +123,105 @@ package
 			trace( _configuration.asString() ); // for debug purpose only
 		}	
 
-		public function EZflarg() 
+		protected function loadXmlFiles(e:Event):void
 		{
-			// LOAD configuration file first in order to determine configuration values for pattern detection and the scene!
-			// Currently uses a hardcoded path.
+			var filesLoaderXML:FileLoaderXML = new FileLoaderXML();
+			var files:Array = filesLoaderXML.load(e.target.data) as Array;
+			
+			/**	FIXME: not nice to use hardcoded indices. would be better to a file object
+				instead an Array, but for the moment its sufficient
+			*/
+			_configFile	= _resourcePath + files[0]; 
+			_patternFile	= _resourcePath + files[1];
+			_modeFile 	= _resourcePath + files[2];
+			
+			trace("EZflarg::loadXmlFiles: config[" + _configFile + "] pattern[" + _patternFile + "] mode[" + _modeFile + "]");
 
+			/** 	LOAD configuration file first in order to determine configuration 
+				values for pattern detection and the scene!
+			*/
 			var configLoader:URLLoader = new URLLoader();
 			configLoader.addEventListener(Event.COMPLETE, loadConfig);
-			configLoader.load(new URLRequest("./resources/config.xml"));
+			configLoader.load(new URLRequest(_configFile));
 
-			// LOAD object library and patterns. 
-			// Currently uses a hardcoded path.
-	 
+			/** 	LOAD object library and patterns. 
+			*/
 			var xmlLoader:URLLoader = new URLLoader();
 			xmlLoader.addEventListener(Event.COMPLETE, initMain);
-			xmlLoader.load(new URLRequest("./resources/objects.xml"));
+			xmlLoader.load(new URLRequest(_patternFile));
+			// xmlLoader.addEventListener(Event.COMPLETE, initStartScreen);
+		}
+
+		public function EZflarg() 
+		{
+			// the files.xml file must be loaded first because it determines which config and pattern
+			// files will be loaded afterwards. thus, all further loading is done in loadXmlFiles()
+			var fileLoader:URLLoader = new URLLoader();
+			fileLoader.addEventListener(Event.COMPLETE, loadXmlFiles);
+			fileLoader.load(new URLRequest(_filesFile));
+			
+			// setup a callback for the external interface in order to communicate
+			// from the outside world (a html page) with this application
+			ExternalInterface.addCallback("sendTextToFlash", getTextFromJavaScript);
+		}
+		
+		/**
+			this functions gets called from an external html page in order to exchange user interaction
+			information. the information are dispatched here and can be used for example to alter the 
+			logic of the game according to interaction in the external html page
+		*/
+		protected function getTextFromJavaScript(str:String):void 
+		{
+			trace("EZflarg::getTextFromJavaScript: received text[" + str + "]");
+		}
+
+		protected function initStartScreen(e:Event):void
+		{
+			
+			var startScreenLayout:StartScreenLayout = new StartScreenLayout();
+			
+			startScreenLayout.addElement( 75, 75, constructButton(40, 20, 5) ); // language en			
+			startScreenLayout.addElement( 75, 100, constructButton(40, 20, 5) ); // language de			
+			
+			startScreenLayout.addElement( 175, 75, constructButton(100, 80, 5) ); // quest button			
+			startScreenLayout.addElement( 300, 75, constructButton(100, 80, 5) ); // tour button
+
+			startScreenLayout.addElement( 100, 175, constructTextArea(300, 50) );
+			// startScreenLayout.addElement( 100, 125, constructUnsupportedCam(300, 150) );
+			
+			_startScreen = new StartScreen();
+			_startScreen.init(400, 200, 50, 50, 0x444444, startScreenLayout);
+			this.addChild(_startScreen);
+		}
+		
+		protected function constructUnsupportedCam(width:uint, height:uint):NoCamera
+		{
+			var messageNoCam:String = "cam not supported";
+			if(Camera.getCamera())
+			{
+				messageNoCam = messageNoCam + "\n[" + Camera.getCamera().name + "]";
+			}			
+			return new NoCamera(width, height, messageNoCam, 0xFFFFFF, 0x444444);				
+		}
+				
+		protected function constructTextArea(width:uint, height:uint):TextField
+		{
+			var textArea:TextField = new TextField(); 
+			textArea.border = true;
+			textArea.background = true;
+			textArea.backgroundColor = 0xFFFFFF;			
+			textArea.textColor = 0x000000;			
+			textArea.height = height;
+			textArea.width = width;	 
+			textArea.condenseWhite = true;
+			textArea.text = "das textfeld mit beschreibungen"
+			return textArea;
+		}
+
+		protected function constructButton(width:uint, height:uint, cornerRadius:uint):GenericButton
+		{
+			var button:GenericButton = new GenericButton(width, height, 0x222222, 0x888888, cornerRadius, 3);
+			return button;
 		}
 	}
 }

@@ -22,13 +22,7 @@
 		<media>marker_display_004.jpg</media>
 		<label>display004</label>
 	</MediaElement>
-<!--
-	<MediaElement>
-		<pattern>marker_005.pat</pattern>
-		<media>marker_display_005.jpg</media>
-		<label>display005</label>
-	</MediaElement>
--->	
+
 	<MediaElement>
 		<pattern>markersquare_001.pat</pattern>
 		<media>blaergCover.jpg</media>
@@ -41,7 +35,40 @@
 		<content>ein kurzer info text</content>
 		<label>los</label>
 	</TextElement>
-<!--
+
+<!--	a media element that loads an image. 
+	supported formats are [jpg, jpeg, png, gif]
+
+	<MediaElement>
+		<pattern>marker_005.pat</pattern>
+		<media>marker_display_005.jpg</media>
+		<label>display005</label>
+	</MediaElement>
+-->	
+
+<!--	a media element that loads an audio file. 
+	supported formats are [mp3]
+
+	<MediaElement>
+		<pattern>marker_005.pat</pattern>
+		<media>audio.mp3</media>
+		<label>myaudio</label>
+	</MediaElement>
+-->
+
+<!--	a media element that loads flash. 
+	supported formats are [flv, swf]
+
+	<MediaElement>
+		<pattern>marker_005.pat</pattern>
+		<media>movie.flv</media>
+		<label>mymovie</label>
+	</MediaElement>
+-->
+
+<!--	a text element that loads an external url
+	supported format are hypelinks the <type> must be [url]
+
 	<TextElement>
 		<pattern>markersquare_003.pat</pattern>
 		<type>url</type>
@@ -49,4 +76,16 @@
 		<label>arte</label>
 	</TextElement>
 -->
+
+<!--	a text element that displays text
+	supported formats are characters; the <type> must be [text]
+
+	<TextElement>
+		<pattern>markersquare_003.pat</pattern>
+		<type>text</type>
+		<content>http://www.arte.tv</content>
+		<label>arte</label>
+	</TextElement>
+-->
+
 </Library>
