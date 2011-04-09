@@ -144,7 +144,7 @@ package com.tchatcho {
 			{
 				this._scene3D = new Scene3D();
 				this._camera3D = new FLARCamera3D(cameraParams);
-				this._viewport3D = new Viewport3D(viewportWidth, viewportHeight);
+				this._viewport3D = new Viewport3D(viewportWidth, viewportHeight, false, true);
 				this.addChild(this._viewport3D);
 				this._renderEngine = new LazyRenderEngine(this._scene3D, this._camera3D, this._viewport3D);
 
@@ -169,8 +169,7 @@ package com.tchatcho {
 			}
 
 			/*private*/ protected function placeModels(patternId:int, url:String = null, url2:String = null, objName:String = null):DisplayObject3D{
-				// var _format:String = url.toString();
-				// _format = _format.substring(_format.length - 3,_format.length).toUpperCase();
+	
 				var _format:String = getExtension(url);				
 				switch (_format){
 					

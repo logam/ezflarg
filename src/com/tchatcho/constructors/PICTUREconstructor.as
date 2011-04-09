@@ -7,6 +7,7 @@ package com.tchatcho.constructors
 	import org.papervision3d.materials.WireframeMaterial;
 
 	import org.papervision3d.materials.BitmapFileMaterial;
+	import org.papervision3d.materials.utils.BitmapMaterialTools;
 	import org.papervision3d.events.FileLoadEvent;
 	import flash.events.Event;
 
@@ -17,9 +18,21 @@ package com.tchatcho.constructors
 
 	public class PICTUREconstructor extends Plane 
 	{
-		private var _ldr:ILoadingEZFLAR 	= new LoadingEZFLAR();
-		private var _universe:DisplayObject3D 	= new DisplayObject3D();
-		private var _front_plane:Plane;
+		protected var _ldr:ILoadingEZFLAR 	= new LoadingEZFLAR();
+		protected var _universe:DisplayObject3D = new DisplayObject3D();
+		protected var _front_plane:Plane;
+		protected var _pictureMaterial:BitmapFileMaterial;
+		protected var _patternId:int;
+
+		public function get patternId():int
+		{
+			return this._patternId;
+		}
+
+		public function get patternName():String
+		{
+			return this._universe.name;
+		}
 
 		public function PICTUREconstructor( patternId:int
 						  , url:String = null
@@ -28,6 +41,8 @@ package com.tchatcho.constructors
 						  , loader:ILoadingEZFLAR = null
 						  ) 
 		{
+			_patternId = patternId;
+
 			if(loader != null)
 			{
 				_ldr = loader;
@@ -37,10 +52,10 @@ package com.tchatcho.constructors
 			
 			if (url != null)
 			{
-				var pictureMaterial:BitmapFileMaterial = new BitmapFileMaterial(url, true);
-				pictureMaterial.doubleSided = true;
-				pictureMaterial.addEventListener( FileLoadEvent.LOAD_COMPLETE , loaderComplete );
-				_front_plane = new Plane(pictureMaterial, 500, 500, 4, 4);
+				_pictureMaterial = new BitmapFileMaterial(url, true);
+				_pictureMaterial.doubleSided = /*false*/ true;
+				_pictureMaterial.addEventListener( FileLoadEvent.LOAD_COMPLETE , loaderComplete );
+				_front_plane = new Plane(_pictureMaterial, 500, 500, 4, 4);
 			} 
 			else 
 			{

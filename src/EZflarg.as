@@ -81,6 +81,7 @@ package
 			});
 			_ezflar.onUpdated(function(marker:FLARMarkerEvent):void 
 			{
+				/*
 				trace("EZflarg::onUpdated: ["+ marker.marker.patternId+"]>>" +
 					  "X:" + marker.x() + " || " +
 					  "Y:" + marker.y() + " || " +
@@ -88,7 +89,8 @@ package
 					  "RX:" + marker.rotationX() + " || " +
 					  "RY:" + marker.rotationY() + " || " +
 					  "RZ:" + marker.rotationZ() + " || "
-				);	
+				);
+				*/	
 			});
 			_ezflar.onRemoved(function(marker:FLARMarkerEvent):void 
 			{
