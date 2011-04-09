@@ -3,9 +3,6 @@ package com.quilombo
 	import flash.events.Event;
 	import flash.media.Camera;
 
-	import flash.net.navigateToURL;
-    	import flash.net.URLRequest;
-
 	import com.tchatcho.constructors.URLconstructor;
 	import com.tchatcho.Base_model;
 	import com.tchatcho.EZflar;
@@ -20,8 +17,11 @@ package com.quilombo
 	public class EZflarEx extends EZflar
 	{
 		protected var _dispatcher:ConstructorEventDispatcher = new ConstructorEventDispatcher();
-		protected var _contentPath:String;
 
+		protected var _funcMarkerClicked:Function;
+		protected var _funcMarkerMouseOver:Function;
+		protected var _funcMarkerMouseOut:Function;
+	
 		public function EZflarEx ( configuration:ConfigHolder )
 		{
 			super	( configuration.objects
@@ -37,70 +37,53 @@ package com.quilombo
 				, configuration.patternMinConfidence
 				, configuration.markerUpdateThreshold
 				);
-			_contentPath = configuration.contentPath;
-
 		}
 
-		protected function loadObjects(event:PatternNameEvent):void
+		protected function markerClicked (event:PatternNameEvent) :void 
 		{
-			trace("EZflarEx::loadObjects for pattern [" + event.patternName + "]");
-			var url1:String = "file://" + _contentPath + "marker001.html";
-			var url2:String = "file://" + _contentPath + "marker002.html";
-			var url3:String = "file://" + _contentPath + "marker003.html";
-			var url4:String = "file://" + _contentPath + "marker004.html";
-			var url5:String = "file://" + _contentPath + "marker005.html";
-			var url6:String = "file://" + _contentPath + "marker006.html";
-			var url7:String = "file://" + _contentPath + "marker007.html";
-			var url8:String = "file://" + _contentPath + "marker008.html";
+			if (_funcMarkerClicked != null)
+			{
+				_funcMarkerClicked(event);
+			}
+		}
+		
+		protected function markerMouseOver (event:PatternNameEvent) :void 
+		{
+			if (_funcMarkerMouseOver != null)
+			{
+				_funcMarkerMouseOver(event);
+			}
+		}
 
-			var request:URLRequest;
-			
-			if( event.patternName == "marker001" )
+		protected function markerMouseOut (event:PatternNameEvent) :void 
+		{
+			if (_funcMarkerMouseOut != null)
 			{
-				request = new URLRequest(url1);
+				_funcMarkerMouseOut(event);
 			}
-			if( event.patternName == "marker002" )
-			{
-				request = new URLRequest(url2);
-			}
-			if( event.patternName == "marker003" )
-			{
-				request = new URLRequest(url3);
-			}
-			if( event.patternName == "marker004" )
-			{
-				request = new URLRequest(url4);
-			}
-			if( event.patternName == "marker005" )
-			{
-				request = new URLRequest(url5);
-			}
-			if( event.patternName == "marker006" )
-			{
-				request = new URLRequest(url6);
-			}
-			if( event.patternName == "marker007" )
-			{
-				request = new URLRequest(url7);
-			}
-			if( event.patternName == "marker008" )
-			{
-				request = new URLRequest(url8);
-			}
+		}
 
-			try 
-			{
-				navigateToURL(request, '_blank');
-			} 
-			catch (e:Error) 
-			{
-				trace("EZflarEx::loadObjects() Error occurred while loading url [" + request + "]");
-			}
+		public function onMarkerClicked(func:Function):void
+		{
+			_funcMarkerClicked = func;
+		}
+
+		public function onMarkerMouseOver(func:Function):void
+		{
+			_funcMarkerMouseOver = func;
+		}
+
+		public function onMarkerMouseOut(func:Function):void
+		{
+			_funcMarkerMouseOut = func;
 		}
 
 		private function onFlarManagerInitiated (evt:Event) :void 
 		{
-			_dispatcher.addEventListener( ConstructorEventDispatcher.CLICK, loadObjects);
+			// register three event handlers that gets invoked on mouse interaction with a detected marker
+			_dispatcher.addEventListener( ConstructorEventDispatcher.CLICK, markerClicked);
+			_dispatcher.addEventListener( ConstructorEventDispatcher.MOUSE_OVER, markerMouseOver);
+			_dispatcher.addEventListener( ConstructorEventDispatcher.MOUSE_OUT, markerMouseOut);
 
 			super.base_model = new BaseModelEx(	super._objects,
 								super.patterns.length,

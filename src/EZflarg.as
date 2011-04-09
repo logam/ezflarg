@@ -9,6 +9,9 @@ package
 	import flash.media.Camera;
 	import flash.text.TextField;
 
+	import flash.net.navigateToURL;
+    	import flash.net.URLRequest;
+
 	import mx.utils.ObjectUtil;
 
 	import com.tchatcho.EZflar;	//tcha-tcho.com
@@ -17,6 +20,7 @@ package
 	
 	// own stuff
 	import com.quilombo.constructors.LoadingEzflarEx;
+	import com.quilombo.constructors.PatternNameEvent;
 
 	import com.quilombo.display.StartScreen;
 	import com.quilombo.display.StartScreenLayout;
@@ -96,6 +100,68 @@ package
 			{
 				trace("EZflarg::onRemoved: " + marker.marker.patternId);
 			});	
+
+			_ezflar.onMarkerClicked( function(event:PatternNameEvent):void
+			{
+				loadUrlOnClicked(event);
+			});
+		}
+
+		protected function loadUrlOnClicked(event:PatternNameEvent):void
+		{
+			trace("EZflarEx::loadObjects for pattern [" + event.patternName + "]");
+			var url1:String = "file://" + _configuration.contentPath + "marker001.html";
+			var url2:String = "file://" + _configuration.contentPath + "marker002.html";
+			var url3:String = "file://" + _configuration.contentPath + "marker003.html";
+			var url4:String = "file://" + _configuration.contentPath + "marker004.html";
+			var url5:String = "file://" + _configuration.contentPath + "marker005.html";
+			var url6:String = "file://" + _configuration.contentPath + "marker006.html";
+			var url7:String = "file://" + _configuration.contentPath + "marker007.html";
+			var url8:String = "file://" + _configuration.contentPath + "marker008.html";
+
+			var request:URLRequest;
+			
+			if( event.patternName == "marker001" )
+			{
+				request = new URLRequest(url1);
+			}
+			if( event.patternName == "marker002" )
+			{
+				request = new URLRequest(url2);
+			}
+			if( event.patternName == "marker003" )
+			{
+				request = new URLRequest(url3);
+			}
+			if( event.patternName == "marker004" )
+			{
+				request = new URLRequest(url4);
+			}
+			if( event.patternName == "marker005" )
+			{
+				request = new URLRequest(url5);
+			}
+			if( event.patternName == "marker006" )
+			{
+				request = new URLRequest(url6);
+			}
+			if( event.patternName == "marker007" )
+			{
+				request = new URLRequest(url7);
+			}
+			if( event.patternName == "marker008" )
+			{
+				request = new URLRequest(url8);
+			}
+
+			try 
+			{
+				navigateToURL(request, '_blank');
+			} 
+			catch (e:Error) 
+			{
+				trace("EZflarEx::loadObjects() Error occurred while loading url [" + request + "]");
+			}
 		}
 
 		/**
