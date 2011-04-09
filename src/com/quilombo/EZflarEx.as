@@ -20,6 +20,7 @@ package com.quilombo
 	public class EZflarEx extends EZflar
 	{
 		protected var _dispatcher:ConstructorEventDispatcher = new ConstructorEventDispatcher();
+		protected var _contentPath:String;
 
 		public function EZflarEx ( configuration:ConfigHolder )
 		{
@@ -36,20 +37,21 @@ package com.quilombo
 				, configuration.patternMinConfidence
 				, configuration.markerUpdateThreshold
 				);
+			_contentPath = configuration.contentPath;
+
 		}
 
 		protected function loadObjects(event:PatternNameEvent):void
 		{
 			trace("EZflarEx::loadObjects for pattern [" + event.patternName + "]");
-
-			var url1:String = "http://www.stadt-koeln.de/6/sehenswertes/rathaus/praetorium";
-			var url2:String = "http://vimeo.com";
-			var url3:String = "http://www.heise.de";
-			var url4:String = "http://www.diezeit.de";
-			var url5:String = "http://www.gulli.com";
-			var url6:String = "http://stackoverflow.com";
-			var url7:String = "http://de.wikipedia.org";
-			var url8:String = "file:///home/quatsch/sandboy/flex/actionscript/bin/start.html";
+			var url1:String = "file://" + _contentPath + "marker001.html";
+			var url2:String = "file://" + _contentPath + "marker002.html";
+			var url3:String = "file://" + _contentPath + "marker003.html";
+			var url4:String = "file://" + _contentPath + "marker004.html";
+			var url5:String = "file://" + _contentPath + "marker005.html";
+			var url6:String = "file://" + _contentPath + "marker006.html";
+			var url7:String = "file://" + _contentPath + "marker007.html";
+			var url8:String = "file://" + _contentPath + "marker008.html";
 
 			var request:URLRequest;
 			

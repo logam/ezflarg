@@ -26,7 +26,7 @@ package com.quilombo
 			configuration.patternMinConfidence	= _xml.patternminconfidence.text();
 			configuration.unscaledMarkerWidth	= _xml.unscaledmarkerwidth.text();
 			configuration.markerUpdateThreshold	= _xml.markerUpdateThreshold.text();
-
+			configuration.contentPath		= _xml.contentPath.text();
 			return configuration;
 		}
 	} 
