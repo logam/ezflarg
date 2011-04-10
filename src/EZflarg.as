@@ -13,11 +13,12 @@ package
     	import flash.net.URLRequest;
 
 	import mx.utils.ObjectUtil;
-
+	 
 	import com.tchatcho.EZflar;	//tcha-tcho.com
 	import com.tchatcho.NoCamera;
 	import com.transmote.flar.FLARMarkerEvent;	
-	
+	import com.transmote.flar.FLARMarker;
+
 	// own stuff
 	import com.quilombo.constructors.LoadingEzflarEx;
 	import com.quilombo.constructors.PatternNameEvent;
@@ -31,6 +32,9 @@ package
 	import com.quilombo.ConfigLoaderXML;
 	import com.quilombo.PatternLoaderXML;
 	import com.quilombo.FileLoaderXML;
+	import com.quilombo.ModeLoaderXML;
+	import com.quilombo.MarkerSequenceMode;
+	import com.quilombo.IMode;
 
 	import flash.external.ExternalInterface;
 
@@ -49,6 +53,8 @@ package
 		protected var _configFile:String;
 		protected var _patternFile:String;
 		protected var _modeFile:String;
+
+		protected var _markerMode:IMode; 
 
 		/**
 			the event function that gets called on completion of reading the objects.xml file.
@@ -77,6 +83,23 @@ package
 				// _ezflar.addModelTo([0,"text", "zone ar"], ["textStart"]);
 				trace("EZflarg::onStarted");
 			});
+			
+			/**
+				this callback gets called before the onAdded callback.if a _markerMode is existing, its detect method gets called.
+				detect calls another callback of this class. thas callback may change the event argument, i.e to prevent that the
+				object attached to the marker gets displayed. if no _markerMode is available, onPreAdded just returns the received
+				event without altering it.
+			*/
+			_ezflar.onPreAdded(function(event:FLARMarkerEvent):FLARMarkerEvent 
+			{
+				trace("EZflarg::onPreAdded: " + event.marker.patternId)
+				if( _markerMode )
+				{
+					event = _markerMode.detected( _ezflar.patternName(event.marker.patternId), event );
+				}
+				return event;
+			});
+
 			_ezflar.onAdded(function(marker:FLARMarkerEvent):void 
 			{
 				// _ezflar.getObject(0,"mygif").rotationX = 90;
@@ -189,23 +212,95 @@ package
 			var cfgLoaderXML:ConfigLoaderXML = new ConfigLoaderXML();
 			_configuration = cfgLoaderXML.load(e.target.data) as ConfigHolder;
 			trace( _configuration.asString() ); // for debug purpose only
-		}	
+		}
+
+		protected function loadMode(e:Event):void
+		{
+			var modeLoaderXML:ModeLoaderXML = new ModeLoaderXML();
+			_markerMode = modeLoaderXML.load(e.target.data) as IMode;
+
+			if( _markerMode )
+			{
+				var sequenceMode:MarkerSequenceMode = _markerMode as MarkerSequenceMode;
+				if(sequenceMode)
+				{
+					sequenceMode.onDetection
+					(
+						function(markerName:String, event:FLARMarkerEvent):FLARMarkerEvent
+						{
+							trace("EZflarg::onDetection: " + event.marker.patternId);
+							return event;
+						}						
+					);
+					
+					sequenceMode.onNotNextInSequence
+					(
+						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
+						{
+							trace("EZflarg::onNotNextInSequence: " + event.marker.patternId);
+							// create an unvalid marker with id == -1 in order to 
+							// prevent the loading of the associated content
+							var invalidMarker:FLARMarker = new FLARMarker( -1
+												     , event.marker.direction
+												     , event.marker.confidence
+												     , event.marker.outline
+												     , event.marker.transformMatrix); 					
+							event.marker.copy(invalidMarker);	
+							return event;
+						}
+					);
+
+					sequenceMode.onMarkerPreviouslyDetected
+					(
+						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
+						{
+							trace("EZflarg::onMarkerPreviouslyDetected: " + event.marker.patternId);
+							// create an unvalid marker with id == -1 in order to 
+							// prevent the loading of the associated content
+							var invalidMarker:FLARMarker = new FLARMarker( -1
+												     , event.marker.direction
+												     , event.marker.confidence
+												     , event.marker.outline
+												     , event.marker.transformMatrix); 					
+							event.marker.copy(invalidMarker);							
+							return event;
+						}
+					);
+
+					sequenceMode.onMarkerAlreadyDetected
+					(
+						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
+						{
+							trace("EZflarg::onMarkerAlreadyDetected: " + event.marker.patternId);
+							return event;
+						}
+					);
+				}
+			}
+		}
 
 		protected function loadXmlFiles(e:Event):void
 		{
 			var filesLoaderXML:FileLoaderXML = new FileLoaderXML();
 			var files:Array = filesLoaderXML.load(e.target.data) as Array;
 			
-			/**	FIXME: not nice to use hardcoded indices. would be better to a file object
+			/**	FIXME: not nice to use hardcoded indices. would be better to use a file object
 				instead an Array, but for the moment its sufficient
 			*/
 			_configFile	= _resourcePath + files[0]; 
 			_patternFile	= _resourcePath + files[1];
 			_modeFile 	= _resourcePath + files[2];
 			
-			trace("EZflarg::loadXmlFiles: config[" + _configFile + "] pattern[" + _patternFile + "] mode[" + _modeFile + "]");
+			trace("EZflarg::loadXmlFiles:\n config[" + _configFile + "]\n pattern[" + _patternFile + "]\n mode[" + _modeFile + "]");
 
-			/** 	LOAD configuration file first in order to determine configuration 
+			/**
+			*/
+			var modeLoader:URLLoader = new URLLoader();
+			modeLoader.addEventListener(Event.COMPLETE, loadMode);
+			modeLoader.load(new URLRequest(_modeFile));
+			
+
+			/** 	LOAD configuration file before the patterns in order to determine configuration 
 				values for pattern detection and the scene!
 			*/
 			var configLoader:URLLoader = new URLLoader();

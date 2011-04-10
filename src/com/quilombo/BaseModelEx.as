@@ -9,6 +9,7 @@ package com.quilombo
 	
 	import com.tchatcho.Base_model;
 	import com.tchatcho.constructors.ILoadingEZFLAR;
+	import com.transmote.flar.FLARMarker;
 	
 	import com.quilombo.constructors.TXT40constructorEx;
 	import com.quilombo.constructors.PICTUREconstructorEx;
@@ -30,6 +31,22 @@ package com.quilombo
 		{
 			super(objects, numPatterns, cameraParams, viewportWidth, viewportHeight, pathToResources, modelsPath, loader);
 			_dispatcher = dispatcher;		
+		}
+		
+		/**
+	
+		*/
+		public override function addMarker (marker:FLARMarker) :void 
+		{
+			// check if pattern id is available in the pattern array
+			if(marker.patternId >= 0 && marker.patternId < super._objects.length )
+			{
+				super.addMarker(marker);
+			}
+			else
+			{
+				trace("BaseModelEx::addMarker() marker is not valid [" + marker.patternId + "]");
+			}
 		}
 
 		protected override function placeModels ( patternId:int

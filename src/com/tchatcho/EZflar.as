@@ -251,7 +251,8 @@ package com.tchatcho {
 		public function onRemoved(func:Function):void{
 			_funcRemoved = func;
 		}
-		public function addModelTo(set1:Array, set2:Array = null):void{
+		public function addModelTo(set1:Array, set2:Array = null):void
+		{
 			this.base_model.addModelToStage(set1, set2);
 		}
 		public function getObject(onMarker:int,thisName:String = "universe"):*{

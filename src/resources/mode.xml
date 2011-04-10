@@ -1,0 +1,122 @@
+<Mode>
+	<OrderedSequence>
+		<Detect>
+			<Item>marker001</Item>
+			<Item>marker002</Item>
+			<Item>marker003</Item>
+			<Item>marker004</Item>
+			<Item>marker005</Item>
+			<Item>marker006</Item>
+			<Item>marker007</Item>
+			<Item>marker008</Item>
+		</Detect>
+		<Error>
+			<AlreadyDetected>
+				<Message>Dieser Marker wurde schon erkannt!</Message>
+			</AlreadyDetected>
+			<PreviouslyDetected>
+				<Message>Dieser Marker wurde schon erkannt!</Message>
+			</PreviouslyDetected>
+			<WrongOrder>
+				<Message>Du hast Marker ausgelassen! Finde die anderen zuerst.</Message>
+			</WrongOrder>			
+		</Error>
+	</OrderedSequence>
+</Mode>
+<!--
+	<DetectMarker label="marker001">
+		<OnMouseClick> 
+			<TextElement> 
+				<Type>url</Type>
+				<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker001.html</Content>
+			</TextElement>
+			<MediaElement> 
+				<Media>audio.mp3</Media>
+			</MediaElement>
+		<OnMouseClick>
+	</DetectMarker>
+
+	<DetectMarker label="marker002">
+		<OnMouseClick> 
+			<TextElement> 
+				<Type>url</Type>
+				<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker002.html</Content>
+			</TextElement>
+			<MediaElement> 
+				<Media>audio.mp3</Media>
+			</MediaElement>
+		<OnMouseClick>
+	</DetectMarker>
+
+	<DetectMarker label="marker003">
+		<OnMouseClick> 
+			<TextElement> 
+				<Type>url</Type>
+				<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker003.html</Content>
+			</TextElement>
+			<MediaElement> 
+				<Media>audio.mp3</Media>
+			</MediaElement>
+		<OnMouseClick>
+	</DetectMarker>
+
+	<DetectMarker label="marker004">
+		<OnMouseClick> 
+			<TextElement> 
+				<Type>url</Type>
+				<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker004.html</Content>
+			</TextElement>
+			<MediaElement> 
+				<Media>audio.mp3</Media>
+			</MediaElement>
+		<OnMouseClick>
+	</DetectMarker>
+
+	<DetectMarker label="marker005">
+		<OnMouseClick> 
+			<TextElement> 
+				<Type>url</Type>
+				<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker005.html</Content>
+			</TextElement>
+			<MediaElement> 
+				<Media>audio.mp3</Media>
+			</MediaElement>
+		<OnMouseClick>
+	</DetectMarker>
+
+	<DetectMarker label="marker006">
+		<OnMouseClick> 
+			<TextElement> 
+				<Type>url</Type>
+				<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker006.html</Content>
+			</TextElement>
+			<MediaElement> 
+				<Media>audio.mp3</Media>
+			</MediaElement>
+		<OnMouseClick>
+	</DetectMarker>
+
+	<DetectMarker label="marker007">
+		<OnMouseClick> 
+			<TextElement> 
+				<Type>url</Type>
+				<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker007.html</Content>
+			</TextElement>
+			<MediaElement> 
+				<Media>audio.mp3</Media>
+			</MediaElement>
+		<OnMouseClick>
+	</DetectMarker>
+
+	<DetectMarker label="marker008">
+		<OnMouseClick> 
+			<TextElement> 
+				<Type>url</Type>
+				<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker008.html</Content>
+			</TextElement>
+			<MediaElement> 
+				<Media>audio.mp3</Media>
+			</MediaElement>
+		<OnMouseClick>
+	</DetectMarker>
+-->

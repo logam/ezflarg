@@ -3,6 +3,7 @@ package com.quilombo
 	import flash.events.Event;
 	import flash.media.Camera;
 
+	import com.transmote.flar.FLARMarkerEvent;
 	import com.tchatcho.constructors.URLconstructor;
 	import com.tchatcho.Base_model;
 	import com.tchatcho.EZflar;
@@ -21,6 +22,8 @@ package com.quilombo
 		protected var _funcMarkerClicked:Function;
 		protected var _funcMarkerMouseOver:Function;
 		protected var _funcMarkerMouseOut:Function;
+
+		protected var _funcPreAdded:Function;
 	
 		public function EZflarEx ( configuration:ConfigHolder )
 		{
@@ -37,6 +40,15 @@ package com.quilombo
 				, configuration.patternMinConfidence
 				, configuration.markerUpdateThreshold
 				);
+		}
+
+		protected override function onMarkerAdded (evt:FLARMarkerEvent) :void 
+		{
+			if (_funcPreAdded != null)
+			{
+				evt = _funcPreAdded(evt);
+			}			
+			super.onMarkerAdded(evt);
 		}
 
 		protected function markerClicked (event:PatternNameEvent) :void 
@@ -62,17 +74,34 @@ package com.quilombo
 				_funcMarkerMouseOut(event);
 			}
 		}
+		
+		/**	function signature must be
+			function(event:FLARMarkerEvent):FLARMarkerEvent
+		*/
+		public function onPreAdded(func:Function):void
+		{
+			_funcPreAdded = func;
+		}
 
+		/**	function signature must be
+			function(event:PatternNameEvent):void
+		*/
 		public function onMarkerClicked(func:Function):void
 		{
 			_funcMarkerClicked = func;
 		}
-
+		
+		/**	function signature must be
+			function(event:PatternNameEvent):void
+		*/
 		public function onMarkerMouseOver(func:Function):void
 		{
 			_funcMarkerMouseOver = func;
 		}
 
+		/**	function signature must be
+			function(event:PatternNameEvent):void
+		*/
 		public function onMarkerMouseOut(func:Function):void
 		{
 			_funcMarkerMouseOut = func;
@@ -99,6 +128,32 @@ package com.quilombo
 			if (super._funcStarted != null){
 				super._funcStarted();
 			}
+		}
+
+		public function patternId( patternName:String ):int
+		{
+			var result:int = -1;
+
+			for (var i:int = 0; i < super._objects.length; i++) 
+			{
+				if( _objects[i][1] == patternName)
+				{
+					result = i;
+					break;
+				}
+			}
+			return result;
+		}
+
+		public function patternName( patternId:int ):String
+		{	
+			var result:String = "undefined";
+			if( patternId >= 0 && patternId < _objects.length )
+			{			
+				result = _objects[patternId][1]
+			}
+
+			return result;
 		}
 
 		protected override function init () :void 

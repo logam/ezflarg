@@ -42,7 +42,7 @@ package com.tchatcho {
 		private var _renderEngine:LazyRenderEngine;
 		private var _pointLight3D:PointLight3D;
 
-		private var _objects:Array;
+		protected var _objects:Array;
 		private var _numPatterns:uint;
 		private var _pathToResources:String;
 		private var _modelsPath:String;
@@ -74,32 +74,43 @@ package com.tchatcho {
 			this.initPapervisionEnvironment(cameraParams, viewportWidth, viewportHeight);
 		}
 
-	public function addMarker (marker:FLARMarker) :void {
-		if(_firstLock == false){
+	public function addMarker (marker:FLARMarker) :void 
+	{
+		if(_firstLock == false)
+		{
 			removeMarker(marker);
 		}
-		var objectsToAdd:Array = new Array();
-		for (var i:int = 0; i < _objectsToAdd.length; i++){
-			objectsToAdd.push(_objectsToAdd[i])
-			}
-			objectsToAdd.push([constructURL([marker.patternId, _objects[marker.patternId][0][1], _objects[marker.patternId][0][2]]),_objects[marker.patternId][1]]);
-			// associate container with corresponding marker
-			for (var j:int = 0; j < objectsToAdd.length; j++)	
-			{
-				if(objectsToAdd[j][0][0] == marker.patternId)
-				{
-					var modelParsed:DisplayObject3D = placeModels(
-										objectsToAdd[j][0][0], 
-										objectsToAdd[j][0][1], 
-										objectsToAdd[j][0][2], 
-										objectsToAdd[j][1]);
 
-					this._markersByPatternId.push(new Array (objectsToAdd[j][0][0], marker, modelParsed));
-				}
-			}
-			_oldCount = new Date();
-			_firstLock = false;
+		var objectsToAdd:Array = new Array();
+		for (var i:int = 0; i < _objectsToAdd.length; i++)
+		{
+			objectsToAdd.push(_objectsToAdd[i])
 		}
+		
+		objectsToAdd.push([constructURL([ marker.patternId
+						, _objects[marker.patternId][0][1]
+						, _objects[marker.patternId][0][2]])
+						, _objects[marker.patternId][1]]);
+
+		// associate container with corresponding marker
+		for (var j:int = 0; j < objectsToAdd.length; j++)	
+		{
+			if(objectsToAdd[j][0][0] == marker.patternId)
+			{
+				var modelParsed:DisplayObject3D = placeModels(
+									objectsToAdd[j][0][0], 	// marker id
+									objectsToAdd[j][0][1], 	// url1
+									objectsToAdd[j][0][2], 	// url2
+									objectsToAdd[j][1]);	// marker name
+
+				this._markersByPatternId.push(new Array (objectsToAdd[j][0][0], marker, modelParsed));
+			}
+		}
+		_oldCount = new Date();
+		_firstLock = false;
+	}
+		
+
 		public function removeMarker (marker:FLARMarker) :void {
 			// find and remove marker
 			_newCount = new Date();
