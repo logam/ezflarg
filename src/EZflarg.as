@@ -86,26 +86,33 @@ package
 			
 			/**
 				this callback gets called before the onAdded callback.if a _markerMode is existing, its detect method gets called.
-				detect calls another callback of this class. thas callback may change the event argument, i.e to prevent that the
+				detect calls another callback of this class. that callback may change the event argument, i.e to prevent that the
 				object attached to the marker gets displayed. if no _markerMode is available, onPreAdded just returns the received
 				event without altering it.
 			*/
 			_ezflar.onPreAdded(function(event:FLARMarkerEvent):FLARMarkerEvent 
 			{
 				trace("EZflarg::onPreAdded: " + event.marker.patternId)
-				if( _markerMode )
+			/*	if( _markerMode != null )
 				{
 					event = _markerMode.detected( _ezflar.patternName(event.marker.patternId), event );
 				}
-				return event;
+			*/	return event;
 			});
 
-			_ezflar.onAdded(function(marker:FLARMarkerEvent):void 
+			_ezflar.onAdded(function(event:FLARMarkerEvent):void 
 			{
 				// _ezflar.getObject(0,"mygif").rotationX = 90;
 				// _ezflar.getObject(0,"los").rotationX = 90;
-				trace("EZflarg::onAdded: " + marker.marker.patternId);
+				trace("EZflarg::onAdded: " + event.marker.patternId);
+
+				if( _markerMode != null )
+				{
+					event = _markerMode.detected( _ezflar.patternName(event.marker.patternId), event );
+				}
+						
 			});
+			
 			_ezflar.onUpdated(function(marker:FLARMarkerEvent):void 
 			{
 				/*
@@ -128,7 +135,33 @@ package
 			{
 				loadUrlOnClicked(event);
 			});
+
+			_ezflar.onMarkerMouseOver( function(event:PatternNameEvent):void
+			{
+				markerMouseOver(event);
+			});
+
+			_ezflar.onMarkerMouseOut( function(event:PatternNameEvent):void
+			{
+				markerMouseOut(event);
+			});
 		}
+
+		protected function markerMouseOver(event:PatternNameEvent):void
+		{
+			trace("EZflarEx::markerMouseOver for pattern [" + event.patternName + "]");
+			_ezflar.getObject(event.patternId, event.patternName).pitch(-45);
+			// _ezflar.getObject(event.patternId, event.patternName).material.lineThickness = 10;
+			// _ezflar.getObject(event.patternId, event.patternName).material.lineColor = 0x444444;
+		}
+
+		protected function markerMouseOut(event:PatternNameEvent):void
+		{
+			trace("EZflarEx::markerMouseOut for pattern [" + event.patternName + "]");
+			_ezflar.getObject(event.patternId, event.patternName).pitch(45);			
+			// _ezflar.getObject(event.patternId, event.patternName).material.lineThickness = 1;
+			// _ezflar.getObject(event.patternId, event.patternName).material.lineColor = 0x444444;
+		}	
 
 		protected function loadUrlOnClicked(event:PatternNameEvent):void
 		{
@@ -219,16 +252,17 @@ package
 			var modeLoaderXML:ModeLoaderXML = new ModeLoaderXML();
 			_markerMode = modeLoaderXML.load(e.target.data) as IMode;
 
-			if( _markerMode )
+			if( _markerMode != null )
 			{
 				var sequenceMode:MarkerSequenceMode = _markerMode as MarkerSequenceMode;
-				if(sequenceMode)
+				if(sequenceMode != null)
 				{
 					sequenceMode.onDetection
 					(
 						function(markerName:String, event:FLARMarkerEvent):FLARMarkerEvent
 						{
 							trace("EZflarg::onDetection: " + event.marker.patternId);
+							_ezflar.getObject(event.marker.patternId, markerName).visible = true;
 							return event;
 						}						
 					);
@@ -240,12 +274,28 @@ package
 							trace("EZflarg::onNotNextInSequence: " + event.marker.patternId);
 							// create an unvalid marker with id == -1 in order to 
 							// prevent the loading of the associated content
-							var invalidMarker:FLARMarker = new FLARMarker( -1
+						/*	var invalidMarker:FLARMarker = new FLARMarker( -1
 												     , event.marker.direction
 												     , event.marker.confidence
 												     , event.marker.outline
 												     , event.marker.transformMatrix); 					
-							event.marker.copy(invalidMarker);	
+							event.marker.copy(invalidMarker);
+						*/	
+
+							// _ezflar.addModelTo([0,"Example_FLV.flv"], ["myflv"]);
+							// _ezflar.addModelTo([0,"twitter", "ezflar"], ["mytwitter"]);
+							// _ezflar.addModelTo([0,"text", "du hast einige marker übersprungen"], ["wrongsequence"]);
+
+							/**
+								for now it is assumed that the returned object is a DisplayObject3D.
+								this may true if the current marker represents a graohic object.
+								in case the marker represents a link there will be probably the problem
+								that the link cant be made "invisible" and may get invoked anyway.
+								this function is supposed to prevent that as well as showing images, but it
+								my currently fail in disabling urls, audio.
+							*/
+							_ezflar.getObject(event.marker.patternId, markerName).visible = false;
+
 							return event;
 						}
 					);
@@ -257,12 +307,21 @@ package
 							trace("EZflarg::onMarkerPreviouslyDetected: " + event.marker.patternId);
 							// create an unvalid marker with id == -1 in order to 
 							// prevent the loading of the associated content
-							var invalidMarker:FLARMarker = new FLARMarker( -1
-												     , event.marker.direction
-												     , event.marker.confidence
-												     , event.marker.outline
-												     , event.marker.transformMatrix); 					
-							event.marker.copy(invalidMarker);							
+							
+							// _ezflar.addModelTo([0,"Example_FLV.flv"], ["myflv"]);
+							// _ezflar.addModelTo([0,"twitter", "ezflar"], ["mytwitter"]);
+							// _ezflar.addModelTo([0,"text", "auf diesem marker warst du schon"], ["previsoulydetected"]);
+							
+							/**
+								for now it is assumed that the returned object is a DisplayObject3D.
+								this may true if the current marker represents a graohic object.
+								in case the marker represents a link there will be probably the problem
+								that the link cant be made "invisible" and may get invoked anyway.
+								this function is supposed to prevent that as well as showing images, but it
+								my currently fail in disabling urls, audio.
+							*/
+							_ezflar.getObject(event.marker.patternId, markerName).visible = false;
+							
 							return event;
 						}
 					);
@@ -272,6 +331,7 @@ package
 						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
 						{
 							trace("EZflarg::onMarkerAlreadyDetected: " + event.marker.patternId);
+							_ezflar.getObject(event.marker.patternId, markerName).visible = true;
 							return event;
 						}
 					);

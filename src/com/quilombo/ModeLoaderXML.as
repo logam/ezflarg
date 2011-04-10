@@ -10,23 +10,23 @@ package com.quilombo
 					implements IConfigLoader
 	{
 		/**
-			returns a reference to a new and filled ModeDispatcher object
+			if the mode xml file defines the sequence mode a MarkerSequenceMode object gets returned
+			else null gets returned currently
 		*/
 		public function load(value:Object):Object
 		{
 			super.loadXML(value);
-			var mode:IMode;
+			var mode:IMode = null;
 			
 			if( super._xml.OrderedSequence )
 			{ 
 				mode = loadSequence( new MarkerSequenceMode() )
 			}
-			else
+			
+			if( mode != null )
 			{
-				mode = new DefaultMarkerMode();
+				mode = loadDetectionAction(mode);
 			}
-
-			mode = loadDetectionAction(mode);
 			return mode;
 		}
 		

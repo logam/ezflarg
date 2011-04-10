@@ -15,6 +15,9 @@ package com.quilombo
 			return event;
 		}
 		
+		/**
+			this function doesn't do anything
+		*/
 		public function onDetection ( callback:Function ):void
 		{}
 	}
