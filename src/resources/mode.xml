@@ -1,4 +1,5 @@
 <Mode>
+<!--
 	<OrderedSequence>
 		<Detect>
 			<Item>marker001</Item>
@@ -22,6 +23,7 @@
 			</WrongOrder>			
 		</Error>
 	</OrderedSequence>
+-->
 </Mode>
 <!--
 	<DetectMarker label="marker001">

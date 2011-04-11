@@ -19,8 +19,13 @@ package com.quilombo
 			var mode:IMode = null;
 			
 			if( super._xml.OrderedSequence )
-			{ 
+			{ 	
+				trace("ModeLoaderXML::load() sequence in xml file detected.");
 				mode = loadSequence( new MarkerSequenceMode() )
+			}
+			else
+			{
+				trace("ModeLoaderXML::load() no sequence in xml file detected");
 			}
 			
 			if( mode != null )
@@ -104,18 +109,31 @@ package com.quilombo
 		{
 			// start a new sequence of markers that are going to be detected in the given order
 			mode.newSequence();
+			
+			/** FIXME: 	this is a fast hack to prevent the initialisation of the sequence mode.
+					shall be check through xml apckage instead of using a counter! 
 
+			*/
+			var hasSequence:int=0;
 			var itemList:XMLList = super._xml.OrderedSequence.Detect.Item;
 			trace("ModelLoaderXML::loadSequence\n" + itemList);
 			for each (var item:XML in itemList) 
-			{
+			{	
+				hasSequence++;
 				mode.nextInSequence(item.text());
 			}
 
-			mode.messagePreviouslyDetected		( super._xml.OrderedSequence.Error.PreviouslyDetected.Message.text() );
-			mode.messageAlreadyDetected		( super._xml.OrderedSequence.Error.AlreadyDetected.Message.text() );
-			mode.messageNotNextInSequence		( super._xml.OrderedSequence.Error.WrongOrder.Message.text() );			
-
+			if( hasSequence > 0 )
+			{
+				mode.messagePreviouslyDetected		( super._xml.OrderedSequence.Error.PreviouslyDetected.Message.text() );
+				mode.messageAlreadyDetected		( super._xml.OrderedSequence.Error.AlreadyDetected.Message.text() );
+				mode.messageNotNextInSequence		( super._xml.OrderedSequence.Error.WrongOrder.Message.text() );			
+			}
+			else
+			{
+				trace("ModelLoaderXML::loadSequence() no sequence elements available. turn off sequence mode.");
+				mode = null;
+			}
 			return mode;
 		}
 	}
