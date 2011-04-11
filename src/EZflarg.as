@@ -138,12 +138,12 @@ package
 
 			_ezflar.onMarkerMouseOver( function(event:PatternNameEvent):void
 			{
-				markerMouseOver(event);
+				// markerMouseOver(event);
 			});
 
 			_ezflar.onMarkerMouseOut( function(event:PatternNameEvent):void
 			{
-				markerMouseOut(event);
+				// markerMouseOut(event);
 			});
 		}
 
@@ -162,7 +162,11 @@ package
 			// _ezflar.getObject(event.patternId, event.patternName).material.lineThickness = 1;
 			// _ezflar.getObject(event.patternId, event.patternName).material.lineColor = 0x444444;
 		}	
-
+		
+		/**
+			FIXME: no hardcoded stuff in here. for the moment ok but later on those information must be loaded
+			through an xml file
+		*/
 		protected function loadUrlOnClicked(event:PatternNameEvent):void
 		{
 			trace("EZflarEx::loadObjects for pattern [" + event.patternName + "]");
@@ -212,7 +216,14 @@ package
 
 			try 
 			{
-				navigateToURL(request, '_blank');
+				if( event.patternName == "marker008" )
+				{
+					navigateToURL(request, '_self');
+				}
+				else
+				{
+					navigateToURL(request, '_blank');
+				}
 			} 
 			catch (e:Error) 
 			{
