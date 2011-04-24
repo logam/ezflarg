@@ -9,6 +9,10 @@ package com.quilombo
 	public class ModeLoaderXML 	extends ConfigLoaderBase
 					implements IConfigLoader
 	{
+		protected var _msgPreviouslyDetected:String;
+		protected var _msgAlreadyDetected:String;
+		protected var _msgWrongOrder:String;
+
 		/**
 			if the mode xml file defines the sequence mode a MarkerSequenceMode object gets returned
 			else null gets returned currently
@@ -16,67 +20,32 @@ package com.quilombo
 		public function load(value:Object):Object
 		{
 			super.loadXML(value);
+			setDefaultErrorMessages();
+
 			var mode:IMode = null;
 			
-			if( super._xml.OrderedSequence )
-			{ 	
-				trace("ModeLoaderXML::load() sequence in xml file detected.");
-				mode = loadSequence( new MarkerSequenceMode() )
-			}
-			else
+			var childList:XMLList = super._xml.children();
+			for each (var child:XML in childList)
 			{
-				trace("ModeLoaderXML::load() no sequence in xml file detected");
+				if ( child.name() == "OrderedSequence")
+				{
+					trace("ModeLoaderXML::load() sequence in xml file detected. markers must be detected in defined sequence.");
+					mode = loadSequence( new MarkerSequenceMode(), child)
+				}				
 			}
 			
-			if( mode != null )
-			{
-				mode = loadDetectionAction(mode);
-			}
 			return mode;
 		}
 		
-
-		/**	expects the following xml content
-	
-			<DetectMarker label="marker001">
-				<OnMouseClick> <!-- optional -->
-					<TextElement> <!-- optional -->
-						<Type>url</Type>
-						<Content>file:///home/quatsch/sandbox/flex/actionscript/bin/resources/models/marker001.html</Content>
-					</TextElement>
-					<MediaElement> <!-- optional -->
-						<Media>audio.mp3</Media>
-					</MediaElement>
-				<OnMouseClick>
-			</DetectMarker>
+		/**
+			sets default error messages for the case that no messages are defined in the corresponding xml file.
+			if u want to overwrite the message, just inherit from this class and overwrite this method. 
 		*/
-		protected function loadDetectionAction(mode:IMode):IMode
+		protected function setDefaultErrorMessages():void
 		{
-			/*
-			var detectMarkerList:XMLList = super._xml.DetectMarker;
-			
-			for each (var detectMarker:XML in detectMarkerList) 
-			{
-				var detectMarkerEvent:DetectMarkerEvent = new DetectMarkerEvent();
-				detectMarkerEvent.markerLabel = detectMarker.label.text();				
-				detectMarkerEvent.action = detectMarker.OnMouseClick.text();
-
-				var textElementList:XMLList = super._xml.DetectMarker.OnMouseClick.TextElement;
-				for each (var textElement:XML in textElementList) 
-				{				
-					detectMarkerEvent.addTextAction( textElement.Type.text(), textElement.Content.text() );
-				}
-	
-				var mediaElementList:XMLList = super._xml.DetectMarker.OnMouseClick.MediaElement;
-				for each (var mediaElement:XML in mediaElementList) 
-				{				
-					detectMarkerEvent.addMediaAction( mediaElement.Media.text() );
-				}
-
-				mode.addDetectionEvent(detectMarkerEvent);
-			}			
-			*/
-			return mode;
+			_msgPreviouslyDetected = "Sorry, this marker has been previously detected!";
+			_msgAlreadyDetected = "Sorry, this marker has just been detected!";
+			_msgWrongOrder = "Sorry, you missed some markers!";
 		}
 		
 		/**	expects the following xml elements
@@ -104,36 +73,68 @@ package com.quilombo
 					</WrongOrder>			
 				</Error>
 			</OrderedSequence>
+
+			if <Error> is not available, default messages are assigned to the returned object
+			if <Error> is available but not all messages are defined, the missing ones will use the corresponding defaults
+
+			@return null if <Detect> is not available
+			@return null if <Detect> is available but no <Item> is defined, this the item list is empty
 		*/
-		protected function loadSequence(mode:MarkerSequenceMode):MarkerSequenceMode
+		protected function loadSequence(mode:MarkerSequenceMode, orderedSequence:XML):MarkerSequenceMode
 		{
 			// start a new sequence of markers that are going to be detected in the given order
 			mode.newSequence();
 			
-			/** FIXME: 	this is a fast hack to prevent the initialisation of the sequence mode.
-					shall be check through xml apckage instead of using a counter! 
-
-			*/
-			var hasSequence:int=0;
-			var itemList:XMLList = super._xml.OrderedSequence.Detect.Item;
-			trace("ModelLoaderXML::loadSequence\n" + itemList);
-			for each (var item:XML in itemList) 
-			{	
-				hasSequence++;
-				mode.nextInSequence(item.text());
-			}
-
-			if( hasSequence > 0 )
+			var childList:XMLList = orderedSequence.children();
+			for each (var child:XML in childList)
 			{
-				mode.messagePreviouslyDetected		( super._xml.OrderedSequence.Error.PreviouslyDetected.Message.text() );
-				mode.messageAlreadyDetected		( super._xml.OrderedSequence.Error.AlreadyDetected.Message.text() );
-				mode.messageNotNextInSequence		( super._xml.OrderedSequence.Error.WrongOrder.Message.text() );			
+				if ( child.name() == "Detect")
+				{
+					var itemList:XMLList = orderedSequence.Detect.Item;
+					trace("ModelLoaderXML::loadSequence() add <Detect> items\n" + itemList);
+
+					for each (var item:XML in itemList) 
+					{	
+						mode.nextInSequence(item.text());
+					}
+				}
+				if ( child.name() == "Error")
+				{
+					var messageList:XMLList = orderedSequence.Error.children();
+					trace("ModelLoaderXML::loadSequence() add <Error> items\n" + messageList);
+
+					for each ( var message:XML in messageList)
+					{
+						if(message.name() == "PreviouslyDetected")
+						{
+							trace("ModelLoaderXML::loadSequence() found error message [PreviouslyDetected]" + "[" + message.Message.text() + "]");
+							_msgPreviouslyDetected = message.Message.text();
+						}
+						if(message.name() == "AlreadyDetected")
+						{
+							trace("ModelLoaderXML::loadSequence() found error message [AlreadyDetected]" + "[" + message.Message.text() + "]");
+							_msgAlreadyDetected = message.Message.text();
+						}
+						if(message.name() == "WrongOrder")
+						{
+							trace("ModelLoaderXML::loadSequence() found error message [WrongOrder]" + "[" + message.Message.text() + "]");
+							_msgWrongOrder = message.Message.text();
+						}
+					}
+
+					mode.messagePreviouslyDetected	( _msgPreviouslyDetected );
+					mode.messageAlreadyDetected	( _msgAlreadyDetected );
+					mode.messageNotNextInSequence	( _msgWrongOrder );
+				}				
 			}
-			else
+			
+			// if sequence is empty, make the mode object unvalid and return null
+			if( mode.numItems == 0 )
 			{
 				trace("ModelLoaderXML::loadSequence() no sequence elements available. turn off sequence mode.");
 				mode = null;
 			}
+
 			return mode;
 		}
 	}

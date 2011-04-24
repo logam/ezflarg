@@ -25,6 +25,11 @@ package com.quilombo
 		{
 			super();	// call baseclass constructor
 		}
+
+		public function get numItems():int
+		{
+			return _markerSequence.length;
+		}
 		
 		/**	start a new marker sequence and delete the old one. the new sequence determines
 			in which order the markers must be detected
