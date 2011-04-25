@@ -12,6 +12,7 @@ package com.quilombo
 		public function load(value:Object):Object
 		{
 			super.loadXML(value);
+			setDefaults(); // just for consistency because loaders are calling this function here in general. 
 			var symbols:Array = new Array;
 
 			var mediaElementList:XMLList = super._xml.MediaElement;
@@ -55,5 +56,12 @@ package com.quilombo
 
 			return symbols;
 		}
+		
+		/**
+			this function does nothing because we cannet define default patterns. either patterns are defined in the config file
+			or no patterns are available
+		*/
+		public function setDefaults():void
+		{}
 	}
 }

@@ -22,7 +22,7 @@ package com.quilombo
 		public function load(value:Object):Object
 		{
 			super.loadXML(value);
-			setDefaultFileNames();
+			setDefaults();
 
 			var files:Array = new Array;
 			trace("FileLoaderXML::load() " + _xml);
@@ -63,7 +63,7 @@ package com.quilombo
 			objects file: objects.xml
 			modes file  : mode.xml
 		*/
-		protected function setDefaultFileNames():void
+		public function setDefaults():void
 		{
 			_configFile = "config.xml";
 			_objectsFile = "objects.xml";

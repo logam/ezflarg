@@ -1,0 +1,29 @@
+<!-- 	this config file must be located under the resources folder
+	all other configurations, patterns and media elements are
+	located under the resources folder as well.
+-->
+
+<Actions>
+
+	<!--currently implemented
+
+	<onclick objectlabel="somelabel">
+		<openurl>pathToHtmlFile.html</openurl>
+	</onclick>
+
+	-->
+
+	<!-- future implementation
+ 
+	<onclick objectlabel="somelabel">
+		<openurl>pathToHtmlFile.html</openurl>
+		<play>someAudioOrVideoFile</playmedia>
+		<show>someImageOrTextFile</show>
+	</onclick>
+	
+	</onmouseover></onmouseover>
+	</onmouseout></onmouseout>
+	</onmouseover></onmouseover>
+	-->
+
+</Actions>

@@ -20,7 +20,7 @@ package com.quilombo
 		public function load(value:Object):Object
 		{
 			super.loadXML(value);
-			setDefaultErrorMessages();
+			setDefaults();
 
 			var mode:IMode = null;
 			
@@ -41,7 +41,7 @@ package com.quilombo
 			sets default error messages for the case that no messages are defined in the corresponding xml file.
 			if u want to overwrite the message, just inherit from this class and overwrite this method. 
 		*/
-		protected function setDefaultErrorMessages():void
+		public function setDefaults():void
 		{
 			_msgPreviouslyDetected = "Sorry, this marker has been previously detected!";
 			_msgAlreadyDetected = "Sorry, this marker has just been detected!";

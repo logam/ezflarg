@@ -21,7 +21,9 @@ package com.quilombo
 		protected var _patternMinConfidence:Number 	= 0;	// as percentage: 0-1
 		protected var _markerUpdateThreshold:Number	= 0;	// in pixels
 		protected var _contentPath:String;			// path to the models and content to display
+		protected var _mouseHandling:Boolean		= true;	// mouse handling and events enabled/disabled
 
+ 
 		public function get objects			():Array { return _objects; } 
 		public function get width			():int { return _width; }
 		public function get height			():int { return _height; }
@@ -35,6 +37,7 @@ package com.quilombo
 		public function get mirror			():Boolean { return _mirror; }
 		public function get markerUpdateThreshold	():Number { return _markerUpdateThreshold; }
 		public function get contentPath			():String { return _contentPath; }
+		public function get mouseHandling		():Boolean { return _mouseHandling; }
 
 		public function set objects			( value:Array ):void 	{ _objects = value; } 
 		public function set width			( value:int ):void 	{ _width  = value; }
@@ -49,6 +52,32 @@ package com.quilombo
 		public function set mirror			( value:Boolean ):void 	{ _mirror  = value; }
 		public function set markerUpdateThreshold	( value:Number ):void 	{ _markerUpdateThreshold = value; }
 		public function set contentPath			( value:String):void	{ _contentPath = value; }
+		public function set mouseHandling		( value:Boolean ):void 	{ _mouseHandling = value; }
+		
+		/**
+			clones the config holder data
+		*/
+		public function clone():ConfigHolder
+		{
+			var clone:ConfigHolder = new ConfigHolder;
+			
+			clone.objects = ObjectUtil.copy(this.objects) as Array;
+			clone.width = this.width;
+			clone.height = this.height;
+			clone.frameRate = this.frameRate;
+			clone.downsampleRatio = this.downsampleRatio;
+			clone.patternResolution = this.patternResolution;
+			clone.patternThreshold = this.patternThreshold;
+			clone.patternToBorderRatio = this.patternToBorderRatio;
+			clone.patternMinConfidence = this.patternMinConfidence;
+			clone.unscaledMarkerWidth = this.unscaledMarkerWidth;
+			clone.mirror = this.mirror;
+			clone.markerUpdateThreshold = this.markerUpdateThreshold;
+			clone.contentPath = this.contentPath;
+			clone.mouseHandling = this.mouseHandling;
+
+			return clone;
+		}
 
 		public function asString():String
 		{
@@ -64,8 +93,8 @@ package com.quilombo
 				+ "pattern to border ratio [" + patternToBorderRatio + "]\n"
 				+ "pattern min confidence [" + patternMinConfidence + "]\n"
 				+ "marker update threshold [" + markerUpdateThreshold + "]"
-				+ "content path [" + contentPath + "]";
-
+				+ "content path [" + contentPath + "]"
+				+ "mouse handling [" + mouseHandling + "]";
 		}
 	}
 }

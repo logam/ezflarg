@@ -33,7 +33,9 @@ package
 	import com.quilombo.PatternLoaderXML;
 	import com.quilombo.FileLoaderXML;
 	import com.quilombo.ModeLoaderXML;
+	import com.quilombo.ActionLoaderXML;
 	import com.quilombo.MarkerSequenceMode;
+	import com.quilombo.ActionDispatcher;
 	import com.quilombo.IMode;
 
 	import flash.external.ExternalInterface;
@@ -44,6 +46,7 @@ package
 		protected var _ezflar:EZflarEx;
 		protected var _symbols:Array = new Array();
 		protected var _configuration:ConfigHolder;
+		protected var _actionDispatcher:ActionDispatcher;
 		protected var _externalHtmlCallback:Function = getTextFromJavaScript;
 
 		protected var _startScreen:StartScreen;
@@ -53,6 +56,7 @@ package
 		protected var _configFile:String;
 		protected var _patternFile:String;
 		protected var _modeFile:String;
+		protected var _actionFile:String;
 
 		protected var _markerMode:IMode; 
 
@@ -170,6 +174,11 @@ package
 		protected function loadUrlOnClicked(event:PatternNameEvent):void
 		{
 			trace("EZflarEx::loadObjects for pattern [" + event.patternName + "]");
+
+			/*
+				_actionDispatcher.execute( event.patternName, ActionDispatcher.OnClicked );
+			*/
+
 			var url1:String = "file://" + _configuration.contentPath + "marker001.html";
 			var url2:String = "file://" + _configuration.contentPath + "marker002.html";
 			var url3:String = "file://" + _configuration.contentPath + "marker003.html";
@@ -255,7 +264,7 @@ package
 		{
 			var cfgLoaderXML:ConfigLoaderXML = new ConfigLoaderXML();
 			_configuration = cfgLoaderXML.load(e.target.data) as ConfigHolder;
-			trace( _configuration.asString() ); // for debug purpose only
+			trace( "EZflarg::loadConfig(): " + _configuration.asString() ); // for debug purpose only
 		}
 
 		protected function loadMode(e:Event):void
@@ -303,7 +312,7 @@ package
 								in case the marker represents a link there will be probably the problem
 								that the link cant be made "invisible" and may get invoked anyway.
 								this function is supposed to prevent that as well as showing images, but it
-								my currently fail in disabling urls, audio.
+								may currently fail in disabling urls, audio, etc.
 							*/
 							_ezflar.getObject(event.marker.patternId, markerName).visible = false;
 
@@ -350,6 +359,13 @@ package
 			}
 		}
 
+		protected function loadActions(e:Event):void
+		{
+			var actionLoaderXML:ActionLoaderXML = new ActionLoaderXML();
+			_actionDispatcher = actionLoaderXML.load(e.target.data) as ActionDispatcher;
+			trace("EZflarg::loadActions(): " + _actionDispatcher.asString());
+		}
+
 		protected function loadXmlFiles(e:Event):void
 		{
 			var filesLoaderXML:FileLoaderXML = new FileLoaderXML();
@@ -361,8 +377,9 @@ package
 			_configFile	= _resourcePath + files[0]; 
 			_patternFile	= _resourcePath + files[1];
 			_modeFile 	= _resourcePath + files[2];
+			_actionFile 	= _resourcePath + files[3];
 			
-			trace("EZflarg::loadXmlFiles:\n config[" + _configFile + "]\n pattern[" + _patternFile + "]\n mode[" + _modeFile + "]");
+			trace("EZflarg::loadXmlFiles():\n config[" + _configFile + "]\n pattern[" + _patternFile + "]\n mode[" + _modeFile + "]\n action[" + _actionFile + "]");
 
 			/**
 			*/
@@ -377,6 +394,12 @@ package
 			var configLoader:URLLoader = new URLLoader();
 			configLoader.addEventListener(Event.COMPLETE, loadConfig);
 			configLoader.load(new URLRequest(_configFile));
+
+			/** 	LOAD action description. 
+			*/
+			var actionLoader:URLLoader = new URLLoader();
+			actionLoader.addEventListener(Event.COMPLETE, loadActions);
+			actionLoader.load(new URLRequest(_actionFile));
 
 			/** 	LOAD object library and patterns. 
 			*/
