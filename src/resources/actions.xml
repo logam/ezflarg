@@ -5,25 +5,29 @@
 
 <Actions>
 
-	<!--currently implemented
+<!--currently implemented
 
-	<onclick objectlabel="somelabel">
-		<openurl>pathToHtmlFile.html</openurl>
-	</onclick>
+	<OnClick objectlabel="somelabel">
+		<OpenUrl>pathToHtmlFile.html</OpenUrl>
+		<OpenUrl target="_blank">pathToHtmlFile.html</OpenUrl>
+		<OpenUrl target="_self">pathToHtmlFile.html</OpenUrl>
+		<OpenUrl target="_parent">pathToHtmlFile.html</OpenUrl>
+		<OpenUrl target="_top">pathToHtmlFile.html</OpenUrl>
+	</OnClick>
 
-	-->
+-->
 
-	<!-- future implementation
+<!-- future implementation
  
-	<onclick objectlabel="somelabel">
-		<openurl>pathToHtmlFile.html</openurl>
-		<play>someAudioOrVideoFile</playmedia>
-		<show>someImageOrTextFile</show>
-	</onclick>
+	<OnClick objectlabel="somelabel">
+		<OpenUrl>pathToHtmlFile.html</OpenUrl>
+		<Play>someAudioOrVideoFile</Play>
+		<Show>someImageOrTextFile</Show>
+	</OnClick>
 	
-	</onmouseover></onmouseover>
-	</onmouseout></onmouseout>
-	</onmouseover></onmouseover>
-	-->
+	</OnMouseOver></OnMouseOver>
+	</OnMouseOut></OnMouseOut>
+
+-->
 
 </Actions>

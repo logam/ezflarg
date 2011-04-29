@@ -299,17 +299,7 @@ package com.tchatcho {
 		{
 			return Camera.names;
 		}
-/*
-		public function get currentCamera():String
-		{
-			return Camera.getCamera().name;
-		}
 
-		public function get isCameraSupported():Boolean
-		{
-			return Camera.isSupported;
-		}
-*/
 		protected function isCameraAvailable():Boolean
 		{
 			return (Camera.names.length > 0)

@@ -3,19 +3,24 @@
 package 
 {
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.events.SecurityErrorEvent;
+
 	import flash.net.URLLoader;	
 	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
+
 	import flash.display.MovieClip;
 	import flash.media.Camera;
 	import flash.text.TextField;
-
-	import flash.net.navigateToURL;
-    	import flash.net.URLRequest;
+	import flash.text.TextFormat;
 
 	import mx.utils.ObjectUtil;
 	 
-	import com.tchatcho.EZflar;	//tcha-tcho.com
+	//tcha-tcho.com
+	import com.tchatcho.EZflar;	
 	import com.tchatcho.NoCamera;
+
 	import com.transmote.flar.FLARMarkerEvent;	
 	import com.transmote.flar.FLARMarker;
 
@@ -29,6 +34,7 @@ package
 
 	import com.quilombo.EZflarEx;
 	import com.quilombo.ConfigHolder;
+	import com.quilombo.FileHolder;
 	import com.quilombo.ConfigLoaderXML;
 	import com.quilombo.PatternLoaderXML;
 	import com.quilombo.FileLoaderXML;
@@ -53,10 +59,7 @@ package
 		
 		protected var _resourcePath:String 	= "./resources/";
 		protected var _filesFile:String		= _resourcePath + "xmlfiles.xml";		
-		protected var _configFile:String;
-		protected var _patternFile:String;
-		protected var _modeFile:String;
-		protected var _actionFile:String;
+		protected var _files:FileHolder;		
 
 		protected var _markerMode:IMode; 
 
@@ -82,9 +85,6 @@ package
 
 			_ezflar.onStarted(function():void 
 			{
-				// _ezflar.addModelTo([0,"Example_FLV.flv"], ["myflv"]);
-				// _ezflar.addModelTo([0,"twitter", "ezflar"], ["mytwitter"]);
-				// _ezflar.addModelTo([0,"text", "zone ar"], ["textStart"]);
 				trace("EZflarg::onStarted");
 			});
 			
@@ -97,17 +97,11 @@ package
 			_ezflar.onPreAdded(function(event:FLARMarkerEvent):FLARMarkerEvent 
 			{
 				trace("EZflarg::onPreAdded: " + event.marker.patternId)
-			/*	if( _markerMode != null )
-				{
-					event = _markerMode.detected( _ezflar.patternName(event.marker.patternId), event );
-				}
-			*/	return event;
+				return event;
 			});
 
 			_ezflar.onAdded(function(event:FLARMarkerEvent):void 
 			{
-				// _ezflar.getObject(0,"mygif").rotationX = 90;
-				// _ezflar.getObject(0,"los").rotationX = 90;
 				trace("EZflarg::onAdded: " + event.marker.patternId);
 
 				if( _markerMode != null )
@@ -118,18 +112,8 @@ package
 			});
 			
 			_ezflar.onUpdated(function(marker:FLARMarkerEvent):void 
-			{
-				/*
-				trace("EZflarg::onUpdated: ["+ marker.marker.patternId+"]>>" +
-					  "X:" + marker.x() + " || " +
-					  "Y:" + marker.y() + " || " +
-					  "Z:" + marker.z() + " || " +
-					  "RX:" + marker.rotationX() + " || " +
-					  "RY:" + marker.rotationY() + " || " +
-					  "RZ:" + marker.rotationZ() + " || "
-				);
-				*/	
-			});
+			{});
+
 			_ezflar.onRemoved(function(marker:FLARMarkerEvent):void 
 			{
 				trace("EZflarg::onRemoved: " + marker.marker.patternId);
@@ -142,29 +126,23 @@ package
 
 			_ezflar.onMarkerMouseOver( function(event:PatternNameEvent):void
 			{
-				// markerMouseOver(event);
+				markerMouseOver(event);
 			});
 
 			_ezflar.onMarkerMouseOut( function(event:PatternNameEvent):void
 			{
-				// markerMouseOut(event);
+				markerMouseOut(event);
 			});
 		}
 
 		protected function markerMouseOver(event:PatternNameEvent):void
 		{
 			trace("EZflarEx::markerMouseOver for pattern [" + event.patternName + "]");
-			_ezflar.getObject(event.patternId, event.patternName).pitch(-45);
-			// _ezflar.getObject(event.patternId, event.patternName).material.lineThickness = 10;
-			// _ezflar.getObject(event.patternId, event.patternName).material.lineColor = 0x444444;
 		}
 
 		protected function markerMouseOut(event:PatternNameEvent):void
 		{
 			trace("EZflarEx::markerMouseOut for pattern [" + event.patternName + "]");
-			_ezflar.getObject(event.patternId, event.patternName).pitch(45);			
-			// _ezflar.getObject(event.patternId, event.patternName).material.lineThickness = 1;
-			// _ezflar.getObject(event.patternId, event.patternName).material.lineColor = 0x444444;
 		}	
 		
 		/**
@@ -175,69 +153,7 @@ package
 		{
 			trace("EZflarEx::loadObjects for pattern [" + event.patternName + "]");
 
-			/*
-				_actionDispatcher.execute( event.patternName, ActionDispatcher.OnClicked );
-			*/
-
-			var url1:String = "file://" + _configuration.contentPath + "marker001.html";
-			var url2:String = "file://" + _configuration.contentPath + "marker002.html";
-			var url3:String = "file://" + _configuration.contentPath + "marker003.html";
-			var url4:String = "file://" + _configuration.contentPath + "marker004.html";
-			var url5:String = "file://" + _configuration.contentPath + "marker005.html";
-			var url6:String = "file://" + _configuration.contentPath + "marker006.html";
-			var url7:String = "file://" + _configuration.contentPath + "marker007.html";
-			var url8:String = "file://" + _configuration.contentPath + "marker008.html";
-
-			var request:URLRequest;
-			
-			if( event.patternName == "marker001" )
-			{
-				request = new URLRequest(url1);
-			}
-			if( event.patternName == "marker002" )
-			{
-				request = new URLRequest(url2);
-			}
-			if( event.patternName == "marker003" )
-			{
-				request = new URLRequest(url3);
-			}
-			if( event.patternName == "marker004" )
-			{
-				request = new URLRequest(url4);
-			}
-			if( event.patternName == "marker005" )
-			{
-				request = new URLRequest(url5);
-			}
-			if( event.patternName == "marker006" )
-			{
-				request = new URLRequest(url6);
-			}
-			if( event.patternName == "marker007" )
-			{
-				request = new URLRequest(url7);
-			}
-			if( event.patternName == "marker008" )
-			{
-				request = new URLRequest(url8);
-			}
-
-			try 
-			{
-				if( event.patternName == "marker008" )
-				{
-					navigateToURL(request, '_self');
-				}
-				else
-				{
-					navigateToURL(request, '_blank');
-				}
-			} 
-			catch (e:Error) 
-			{
-				trace("EZflarEx::loadObjects() Error occurred while loading url [" + request + "]");
-			}
+			_actionDispatcher.execute( ActionDispatcher.OnClicked, event.patternName );
 		}
 
 		/**
@@ -264,7 +180,7 @@ package
 		{
 			var cfgLoaderXML:ConfigLoaderXML = new ConfigLoaderXML();
 			_configuration = cfgLoaderXML.load(e.target.data) as ConfigHolder;
-			trace( "EZflarg::loadConfig(): " + _configuration.asString() ); // for debug purpose only
+			trace( "EZflarg::loadConfig(): " + _configuration.toString() ); // for debug purpose only
 		}
 
 		protected function loadMode(e:Event):void
@@ -292,20 +208,7 @@ package
 						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
 						{
 							trace("EZflarg::onNotNextInSequence: " + event.marker.patternId);
-							// create an unvalid marker with id == -1 in order to 
-							// prevent the loading of the associated content
-						/*	var invalidMarker:FLARMarker = new FLARMarker( -1
-												     , event.marker.direction
-												     , event.marker.confidence
-												     , event.marker.outline
-												     , event.marker.transformMatrix); 					
-							event.marker.copy(invalidMarker);
-						*/	
-
-							// _ezflar.addModelTo([0,"Example_FLV.flv"], ["myflv"]);
-							// _ezflar.addModelTo([0,"twitter", "ezflar"], ["mytwitter"]);
-							// _ezflar.addModelTo([0,"text", "du hast einige marker übersprungen"], ["wrongsequence"]);
-
+							
 							/**
 								for now it is assumed that the returned object is a DisplayObject3D.
 								this may true if the current marker represents a graohic object.
@@ -325,23 +228,7 @@ package
 						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
 						{
 							trace("EZflarg::onMarkerPreviouslyDetected: " + event.marker.patternId);
-							// create an unvalid marker with id == -1 in order to 
-							// prevent the loading of the associated content
-							
-							// _ezflar.addModelTo([0,"Example_FLV.flv"], ["myflv"]);
-							// _ezflar.addModelTo([0,"twitter", "ezflar"], ["mytwitter"]);
-							// _ezflar.addModelTo([0,"text", "auf diesem marker warst du schon"], ["previsoulydetected"]);
-							
-							/**
-								for now it is assumed that the returned object is a DisplayObject3D.
-								this may true if the current marker represents a graohic object.
-								in case the marker represents a link there will be probably the problem
-								that the link cant be made "invisible" and may get invoked anyway.
-								this function is supposed to prevent that as well as showing images, but it
-								my currently fail in disabling urls, audio.
-							*/
 							_ezflar.getObject(event.marker.patternId, markerName).visible = false;
-							
 							return event;
 						}
 					);
@@ -369,57 +256,72 @@ package
 		protected function loadXmlFiles(e:Event):void
 		{
 			var filesLoaderXML:FileLoaderXML = new FileLoaderXML();
-			var files:Array = filesLoaderXML.load(e.target.data) as Array;
+			// var files:Array = filesLoaderXML.load(e.target.data) as Array;
+			_files = filesLoaderXML.load(e.target.data) as FileHolder;
+			_files.resourcePath = _resourcePath;
 			
-			/**	FIXME: not nice to use hardcoded indices. would be better to use a file object
-				instead an Array, but for the moment its sufficient
-			*/
-			_configFile	= _resourcePath + files[0]; 
-			_patternFile	= _resourcePath + files[1];
-			_modeFile 	= _resourcePath + files[2];
-			_actionFile 	= _resourcePath + files[3];
+			trace("EZflarg::loadXmlFiles():\n" + _files.toString());
 			
-			trace("EZflarg::loadXmlFiles():\n config[" + _configFile + "]\n pattern[" + _patternFile + "]\n mode[" + _modeFile + "]\n action[" + _actionFile + "]");
-
-			/**
+			/** 	LOAD the mode file which determines whether patterns can be detected in 
+				sequence or random order
 			*/
 			var modeLoader:URLLoader = new URLLoader();
 			modeLoader.addEventListener(Event.COMPLETE, loadMode);
-			modeLoader.load(new URLRequest(_modeFile));
-			
+			modeLoader.addEventListener(IOErrorEvent.IO_ERROR, onIoErrorloadXmlFiles);
+			modeLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityErrorXmlFiles);
+			modeLoader.load(new URLRequest(_files.modeFile));
 
 			/** 	LOAD configuration file before the patterns in order to determine configuration 
 				values for pattern detection and the scene!
 			*/
 			var configLoader:URLLoader = new URLLoader();
 			configLoader.addEventListener(Event.COMPLETE, loadConfig);
-			configLoader.load(new URLRequest(_configFile));
+			configLoader.addEventListener(IOErrorEvent.IO_ERROR, onIoErrorloadXmlFiles);
+			configLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityErrorXmlFiles);
+			configLoader.load(new URLRequest(_files.configFile));
 
 			/** 	LOAD action description. 
 			*/
 			var actionLoader:URLLoader = new URLLoader();
 			actionLoader.addEventListener(Event.COMPLETE, loadActions);
-			actionLoader.load(new URLRequest(_actionFile));
+			actionLoader.addEventListener(IOErrorEvent.IO_ERROR, onIoErrorloadXmlFiles);
+			actionLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityErrorXmlFiles);
+			actionLoader.load(new URLRequest(_files.actionFile));
 
 			/** 	LOAD object library and patterns. 
 			*/
 			var xmlLoader:URLLoader = new URLLoader();
 			xmlLoader.addEventListener(Event.COMPLETE, initMain);
-			xmlLoader.load(new URLRequest(_patternFile));
-			// xmlLoader.addEventListener(Event.COMPLETE, initStartScreen);
+			xmlLoader.addEventListener(IOErrorEvent.IO_ERROR, onIoErrorloadXmlFiles);
+			xmlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityErrorXmlFiles);
+			xmlLoader.load(new URLRequest(_files.objectsFile));
 		}
 
 		public function EZflarg() 
 		{
-			// the files.xml file must be loaded first because it determines which config and pattern
-			// files will be loaded afterwards. thus, all further loading is done in loadXmlFiles()
-			var fileLoader:URLLoader = new URLLoader();
-			fileLoader.addEventListener(Event.COMPLETE, loadXmlFiles);
-			fileLoader.load(new URLRequest(_filesFile));
-			
 			// setup a callback for the external interface in order to communicate
 			// from the outside world (a html page) with this application
 			ExternalInterface.addCallback("sendTextToFlash", getTextFromJavaScript);
+			
+			// the files.xml file must be loaded first because it determines which config and pattern
+			// files will be loaded afterwards. thus, all further loading is done in loadXmlFiles()
+			var fileLoader:URLLoader = new URLLoader();
+			
+			fileLoader.addEventListener(Event.COMPLETE, loadXmlFiles);
+			fileLoader.addEventListener(IOErrorEvent.IO_ERROR, onIoErrorloadXmlFiles);
+			fileLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityErrorXmlFiles);
+			
+			fileLoader.load(new URLRequest(_filesFile));
+		}
+
+		protected function onIoErrorloadXmlFiles(ioError:IOErrorEvent):void
+		{
+			displayIoError( ioError );
+		}
+
+		protected function onSecurityErrorXmlFiles(securityError:SecurityErrorEvent):void
+		{
+			displayDecurityError(securityError);
 		}
 		
 		/**
@@ -432,37 +334,45 @@ package
 			trace("EZflarg::getTextFromJavaScript: received text[" + str + "]");
 		}
 
-		protected function initStartScreen(e:Event):void
+		protected function displayDecurityError(securityError:SecurityErrorEvent):void
 		{
-			
 			var startScreenLayout:StartScreenLayout = new StartScreenLayout();
 			
-			startScreenLayout.addElement( 75, 75, constructButton(40, 20, 5) ); // language en			
-			startScreenLayout.addElement( 75, 100, constructButton(40, 20, 5) ); // language de			
-			
-			startScreenLayout.addElement( 175, 75, constructButton(100, 80, 5) ); // quest button			
-			startScreenLayout.addElement( 300, 75, constructButton(100, 80, 5) ); // tour button
+			var msg:String = "Sorry, but we cannot proceed because a security error occured\n" + securityError;
+			startScreenLayout.addElement( 100, 150, constructTextArea(300, 75, msg) );
+	
+			displayScreen(startScreenLayout);
+		}
 
-			startScreenLayout.addElement( 100, 175, constructTextArea(300, 50) );
-			// startScreenLayout.addElement( 100, 125, constructUnsupportedCam(300, 150) );
-			
-			_startScreen = new StartScreen();
-			_startScreen.init(400, 200, 50, 50, 0x444444, startScreenLayout);
-			this.addChild(_startScreen);
+		protected function displayIoError( ioError:IOErrorEvent ):void
+		{
+			var startScreenLayout:StartScreenLayout = new StartScreenLayout();
+			var fileName:String = ioError.toString();
+			var startIndex:int = fileName.search("URL:")
+			var endIndex:int = fileName.search(']')-1;
+
+			if(startIndex < endIndex)
+			{
+				fileName = fileName.slice(startIndex, endIndex);
+			}
+			var msg:String = "Sorry, but we cannot proceed because an error occured while loading\n" + fileName;
+			startScreenLayout.addElement( 100, 150, constructTextArea(300, 75, msg) );
+	
+			displayScreen(startScreenLayout);
 		}
 		
-		protected function constructUnsupportedCam(width:uint, height:uint):NoCamera
+		protected function displayScreen(layout:StartScreenLayout):void
 		{
-			var messageNoCam:String = "cam not supported";
-			if(Camera.getCamera())
-			{
-				messageNoCam = messageNoCam + "\n[" + Camera.getCamera().name + "]";
-			}			
-			return new NoCamera(width, height, messageNoCam, 0xFFFFFF, 0x444444);				
+			var _screen:StartScreen = new StartScreen();
+			_screen.init(400, 200, 50, 50, 0x444444, layout);
+			this.addChild(_screen);
 		}
-				
-		protected function constructTextArea(width:uint, height:uint):TextField
+
+		protected function constructTextArea(width:uint, height:uint, msg:String):TextField
 		{
+			var format:TextFormat = new TextFormat;
+			format.size = 10;
+
 			var textArea:TextField = new TextField(); 
 			textArea.border = true;
 			textArea.background = true;
@@ -471,14 +381,11 @@ package
 			textArea.height = height;
 			textArea.width = width;	 
 			textArea.condenseWhite = true;
-			textArea.text = "das textfeld mit beschreibungen"
+			textArea.multiline = true;
+			textArea.wordWrap = true;			
+			textArea.text = msg;
+			textArea.setTextFormat(format);			
 			return textArea;
-		}
-
-		protected function constructButton(width:uint, height:uint, cornerRadius:uint):GenericButton
-		{
-			var button:GenericButton = new GenericButton(width, height, 0x222222, 0x888888, cornerRadius, 3);
-			return button;
 		}
 	}
 }

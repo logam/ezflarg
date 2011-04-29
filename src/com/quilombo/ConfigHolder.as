@@ -59,7 +59,7 @@ package com.quilombo
 		*/
 		public function clone():ConfigHolder
 		{
-			var clone:ConfigHolder = new ConfigHolder;
+			var clone:ConfigHolder = new ConfigHolder();
 			
 			clone.objects = ObjectUtil.copy(this.objects) as Array;
 			clone.width = this.width;
@@ -79,7 +79,7 @@ package com.quilombo
 			return clone;
 		}
 
-		public function asString():String
+		public function toString():String
 		{
 			return    "ConfigLoaderXML::trace: \n" 
 				+ "screen width [" + width + "]\n"

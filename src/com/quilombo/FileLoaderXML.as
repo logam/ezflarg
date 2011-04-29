@@ -1,15 +1,12 @@
 package com.quilombo
 {
-	import com.quilombo.ConfigLoaderBase;
-	import com.quilombo.ConfigHolder;
+	import com.quilombo.FileHolder;
 	import com.quilombo.IConfigLoader;
 
 	public class FileLoaderXML 	extends ConfigLoaderBase
 					implements IConfigLoader
 	{
-		protected var _configFile:String;
-		protected var _objectsFile:String;
-		protected var _modeFile:String;
+		protected var _files:FileHolder = new FileHolder();
 
 		/**
 			@return a reference to a new and filled Array of xml file strings
@@ -23,34 +20,39 @@ package com.quilombo
 		{
 			super.loadXML(value);
 			setDefaults();
+			var files:FileHolder = _files.clone();
 
-			var files:Array = new Array;
 			trace("FileLoaderXML::load() " + _xml);
-
+			
 			var fileList:XMLList = super._xml.children();
 			for each (var file:XML in fileList )
 			{
 				if(file.name() == "config")
 				{
 					trace("FileLoaderXML::load() found file [config]" + "[" + file.text() + "]");
-					_configFile = file.text();
+					files.configFile = file.text();
+					continue;
 				}
 				if(file.name() == "objects")
 				{
 					trace("FileLoaderXML::load() found file [objects]" + "[" + file.text() + "]");
-					_objectsFile = file.text();
+					files.objectsFile = file.text();
+					continue;
 				}
 				if(file.name() == "mode")
 				{
 					trace("FileLoaderXML::load() found file [mode]" + "[" + file.text() + "]");
-					_modeFile = file.text();
+					files.modeFile = file.text();
+					continue;
+				}
+				if(file.name() == "action")
+				{
+					trace("FileLoaderXML::load() found file [action]" + "[" + file.text() + "]");
+					files.actionFile = file.text();
+					continue;
 				}
 			}
 			
-			files.push(_configFile);
-			files.push(_objectsFile);
-			files.push(_modeFile);
-
 			return files;
 		}
 		
@@ -65,9 +67,10 @@ package com.quilombo
 		*/
 		public function setDefaults():void
 		{
-			_configFile = "config.xml";
-			_objectsFile = "objects.xml";
-			_modeFile = "mode.xml";
+			_files.configFile = "config.xml";
+			_files.objectsFile = "objects.xml";
+			_files.modeFile = "mode.xml";
+			_files.actionFile = "actions.xml"
 		}
 	} 
 }

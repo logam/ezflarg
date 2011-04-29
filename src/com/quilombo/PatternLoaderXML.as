@@ -59,7 +59,7 @@ package com.quilombo
 		
 		/**
 			this function does nothing because we cannet define default patterns. either patterns are defined in the config file
-			or no patterns are available
+			or no patterns are available at all
 		*/
 		public function setDefaults():void
 		{}
