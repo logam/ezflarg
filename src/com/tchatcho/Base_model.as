@@ -38,7 +38,7 @@ package com.tchatcho {
 		//initiate global vars
 		private var _viewport3D:Viewport3D;
 		private var _camera3D:FLARCamera3D;
-		private var _scene3D:Scene3D;
+		/*private*/ protected var _scene3D:Scene3D;
 		private var _renderEngine:LazyRenderEngine;
 		private var _pointLight3D:PointLight3D;
 

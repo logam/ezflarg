@@ -3,9 +3,8 @@
 */
 package com.quilombo 
 {
-	import org.papervision3d.objects.DisplayObject3D;
-
 	import org.libspark.flartoolkit.core.param.FLARParam;
+	import org.papervision3d.objects.DisplayObject3D;
 	
 	import com.tchatcho.Base_model;
 	import com.tchatcho.constructors.ILoadingEZFLAR;

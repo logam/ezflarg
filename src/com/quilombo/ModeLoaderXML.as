@@ -12,7 +12,7 @@ package com.quilombo
 		protected var _msgPreviouslyDetected:String;
 		protected var _msgAlreadyDetected:String;
 		protected var _msgWrongOrder:String;
-
+		protected var _displayTimeMsg:uint;
 		/**
 			if the mode xml file defines the sequence mode a MarkerSequenceMode object gets returned
 			else null gets returned currently
@@ -46,6 +46,7 @@ package com.quilombo
 			_msgPreviouslyDetected = "Sorry, this marker has been previously detected!";
 			_msgAlreadyDetected = "Sorry, this marker has just been detected!";
 			_msgWrongOrder = "Sorry, you missed some markers!";
+			_displayTimeMsg = 5000;	// 5 seconds
 		}
 		
 		/**	expects the following xml elements
@@ -120,11 +121,17 @@ package com.quilombo
 							trace("ModelLoaderXML::loadSequence() found error message [WrongOrder]" + "[" + message.Message.text() + "]");
 							_msgWrongOrder = message.Message.text();
 						}
+						if(message.name() == "DisplayTime")
+						{
+							trace("ModelLoaderXML::loadSequence() found display time [DisplayTime]" + "[" + message.text() + "]");
+							_displayTimeMsg = message.text();
+						}
 					}
 
-					mode.messagePreviouslyDetected	( _msgPreviouslyDetected );
-					mode.messageAlreadyDetected	( _msgAlreadyDetected );
-					mode.messageNotNextInSequence	( _msgWrongOrder );
+					mode.messagePreviouslyDetected	= _msgPreviouslyDetected;
+					mode.messageAlreadyDetected	= _msgAlreadyDetected;
+					mode.messageNotNextInSequence	= _msgWrongOrder;
+					mode.messageDisplayTime		= _displayTimeMsg;
 				}				
 			}
 			

@@ -11,10 +11,13 @@ package com.quilombo
 		protected var _messagePreviouslyDetected:String;
 		protected var _messageNotNextInSequence:String;
 
+		protected var _messageDisplayTime:uint;
+
 		protected var _funcMarkerAlreadyDetected:Function;
 		protected var _funcMarkerPreviouslyDetected:Function;
 		protected var _funcMarkerNotNextInSequence:Function;
 		protected var _funcMarkerDetected:Function;
+		protected var _funcDisplayTimeSet:Function;
 
 		protected var _currentMarkerIndex:int = -1;
 		protected var _markerSequence:Array;
@@ -82,7 +85,8 @@ package com.quilombo
 		{
 			// find current marker in sequence
 			var newMarkerIndex:int = _markerSequence.indexOf(markerName);
-
+			trace("MarkerSequenceMode::detected() marker[" + markerName + "] detected."); 
+			trace("MarkerSequenceMode::detected() last marker index[" + _currentMarkerIndex + "] detected marker index[" + newMarkerIndex + "]");
 			// is this the first marker to detect or the next in the sequence?
 			if( newMarkerIndex == _currentMarkerIndex+1 )
 			{
@@ -113,8 +117,18 @@ package com.quilombo
 			return event;
 		}
 
+		public function dispatchDisplayTime():void
+		{
+			if( _funcDisplayTimeSet != null )
+			{
+				_funcDisplayTimeSet(_messageDisplayTime);
+			}
+		}
+
 		protected function callMarkerNotNextInSequence(markerName:String, event:FLARMarkerEvent, message:String ):FLARMarkerEvent
 		{
+			trace("MarkerSequenceMode::callMarkerNotNextInSequence() marker[" + markerName + "]");
+			
 			// is the detected marker one of the future markers
 			if(_funcMarkerNotNextInSequence != null )
 			{			
@@ -125,6 +139,8 @@ package com.quilombo
 
 		protected function callMarkerAlreadyDetected(markerName:String, event:FLARMarkerEvent, message:String ):FLARMarkerEvent
 		{
+			trace("MarkerSequenceMode::callMarkerAlreadyDetected() marker[" + markerName + "]");
+			
 			// is the detected marker the currently detected marker again
 			if( _funcMarkerAlreadyDetected != null )
 			{			
@@ -135,6 +151,8 @@ package com.quilombo
 
 		protected function callMarkerPreviouslyDetected(markerName:String, event:FLARMarkerEvent, message:String ):FLARMarkerEvent
 		{
+			trace("MarkerSequenceMode::callMarkerPreviouslyDetected() marker[" + markerName + "]");
+			
 			// is the detected marker one of the previously detected markers
 			if(_funcMarkerPreviouslyDetected != null )
 			{			
@@ -145,6 +163,7 @@ package com.quilombo
 
 		protected function callMarkerDetected(markerName:String, event:FLARMarkerEvent ):FLARMarkerEvent
 		{
+			trace("MarkerSequenceMode::callMarkerDetected() marker[" + markerName + "]");
 			// is the detected marker the next one in the sequence
 			if( _funcMarkerDetected != null )
 			{			
@@ -199,25 +218,40 @@ package com.quilombo
 			_funcMarkerDetected = callback;
 		}
 
+		public function onDisplayTimeSet ( callback:Function ):void
+		{
+			_funcDisplayTimeSet = callback;
+		}
+
 		/**	the message send to the onNotNextInSequence callback function
 		*/
-		public function messageNotNextInSequence ( message:String ):void
+		public function set messageNotNextInSequence ( message:String ):void
 		{
 			_messageNotNextInSequence = message;
 		}		
 		
 		/**	the message send to the onMarkerPreviouslyDetected callback function
 		*/
-		public function messagePreviouslyDetected ( message:String ):void
+		public function set messagePreviouslyDetected ( message:String ):void
 		{
 			_messagePreviouslyDetected = message;
 		}
 
 		/**	the message send to the onMarkerAlreadyDetected callback function
 		*/		
-		public function messageAlreadyDetected ( message:String ):void
+		public function set messageAlreadyDetected ( message:String ):void
 		{
 			_messageAlreadyDetected = message;
+		}
+
+		public function set messageDisplayTime ( time:uint ):void
+		{
+			_messageDisplayTime = time;
+
+			if( _funcDisplayTimeSet != null )
+			{
+				_funcDisplayTimeSet(_messageDisplayTime);
+			}
 		}	
 	}
 }

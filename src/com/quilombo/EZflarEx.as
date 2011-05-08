@@ -3,6 +3,8 @@ package com.quilombo
 	import flash.events.Event;
 	import flash.media.Camera;
 
+	import flash.display.MovieClip;
+
 	import com.transmote.flar.FLARMarkerEvent;
 	import com.tchatcho.constructors.URLconstructor;
 	import com.tchatcho.Base_model;
@@ -24,7 +26,7 @@ package com.quilombo
 		protected var _funcMarkerMouseOut:Function;
 
 		protected var _funcPreAdded:Function;
-	
+		
 		public function EZflarEx ( configuration:ConfigHolder )
 		{
 			super	( configuration.objects
@@ -154,6 +156,23 @@ package com.quilombo
 			}
 
 			return result;
+		}
+
+		public function addModelToScene(object:MovieClip):MovieClip
+		{
+			if(object != null)
+			{
+				super.addChild(object);
+			}			
+			return object;
+		}
+
+		public function removeModelFromScene(object:MovieClip):void
+		{
+			if(object != null)
+			{
+				super.removeChild(object);
+			}
 		}
 
 		protected override function init () :void 

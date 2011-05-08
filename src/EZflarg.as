@@ -5,33 +5,25 @@ package
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.SecurityErrorEvent;
-
+	
 	import flash.net.URLLoader;	
 	import flash.net.URLRequest;
-	import flash.net.navigateToURL;
 
 	import flash.display.MovieClip;
-	import flash.media.Camera;
-	import flash.text.TextField;
-	import flash.text.TextFormat;
-
+	
 	import mx.utils.ObjectUtil;
 	 
 	//tcha-tcho.com
 	import com.tchatcho.EZflar;	
-	import com.tchatcho.NoCamera;
 
 	import com.transmote.flar.FLARMarkerEvent;	
 	import com.transmote.flar.FLARMarker;
 
 	// own stuff
-	import com.quilombo.constructors.LoadingEzflarEx;
 	import com.quilombo.constructors.PatternNameEvent;
-
-	import com.quilombo.display.StartScreen;
-	import com.quilombo.display.StartScreenLayout;
-	import com.quilombo.display.GenericButton;
-
+	import com.quilombo.display.MessageScreen;
+	import com.quilombo.display.MessageScreenTimed;
+	
 	import com.quilombo.EZflarEx;
 	import com.quilombo.ConfigHolder;
 	import com.quilombo.FileHolder;
@@ -50,18 +42,60 @@ package
 	public class EZflarg extends MovieClip 
 	{
 		protected var _ezflar:EZflarEx;
-		protected var _symbols:Array = new Array();
 		protected var _configuration:ConfigHolder;
 		protected var _actionDispatcher:ActionDispatcher;
 		protected var _externalHtmlCallback:Function = getTextFromJavaScript;
-
-		protected var _startScreen:StartScreen;
 		
 		protected var _resourcePath:String 	= "./resources/";
 		protected var _filesFile:String		= _resourcePath + "xmlfiles.xml";		
-		protected var _files:FileHolder;		
+		protected var _files:FileHolder;
 
+		protected var _widthErrorScreen:int	= 400;
+		protected var _heightErrorScreen:int	= 175;
+		protected var _widthMessageScreen:int	= 400;		
+		protected var _heightMessageScreen:int	= 75;		
+		protected var _colorErrorScreenTxt:uint	= 0xFFFFFF;
+		protected var _colorErrorScreenBack:uint= 0x444444;		
+		
 		protected var _markerMode:IMode; 
+		protected var _msgDisplayTime:int	= 5000; // 5 seconds
+		protected var _msgScreen:MessageScreenTimed;
+
+		/**	callbacks that can be assigned to various objects
+		*/
+		protected var _callbackEzFlarOnStarted:Function 			= callbackEzFlarOnStarted;
+		protected var _callbackEzFlarOnPreAdded:Function 			= callbackEzFlarOnPreAdded;
+		protected var _callbackEzFlarOnAdded:Function 				= callbackEzFlarOnAdded;
+		protected var _callbackEzFlarOnUpdated:Function 			= callbackEzFlarOnUpdated;
+		protected var _callbackEzFlarOnRemoved:Function 			= callbackEzFlarOnRemoved;
+		protected var _callbackEzFlarOnMarkerClicked:Function 			= callbackEzFlarOnMarkerClicked;
+		protected var _callbackEzFlarOnMarkerMouseOver:Function 		= callbackEzFlarOnMarkerMouseOver;
+		protected var _callbackEzFlarOnMarkerMouseOut:Function 			= callbackEzFlarOnMarkerMouseOut;
+
+		protected var _callbackSequenceModeOnDetection:Function			= callbackSequenceModeOnDetection;
+		protected var _callbackSequenceModeOnNotNextInSequence:Function		= callbackSequenceModeOnNotNextInSequence;
+		protected var _callbackSequenceModeOnMarkerPreviouslyDetected:Function	= callbackSequenceModeOnMarkerPreviouslyDetected;
+		protected var _callbackSequenceModeOnMarkerAlreadyDetected:Function	= callbackSequenceModeOnMarkerAlreadyDetected;
+		protected var _callbackSequenceModeOnDisplayTimeSet:Function		= callbackSequenceModeOnDisplayTimeSet;
+		
+		public function EZflarg() 
+		{
+			/**	setup a callback for the external interface in order to communicate
+				from the outside world (a html page) with this application
+			*/
+			ExternalInterface.addCallback("sendTextToFlash", getTextFromJavaScript);
+			
+			/**	the files.xml file must be loaded first because it determines which config and pattern
+				files will be loaded afterwards. thus, all further loading is done in loadXmlFiles()
+			*/
+			var fileLoader:URLLoader = new URLLoader();
+			
+			fileLoader.addEventListener(Event.COMPLETE, loadXmlFiles);
+			fileLoader.addEventListener(IOErrorEvent.IO_ERROR, onIoErrorloadXmlFiles);
+			fileLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityErrorXmlFiles);
+			
+			fileLoader.load(new URLRequest(_filesFile));
+		}
 
 		/**
 			the event function that gets called on completion of reading the objects.xml file.
@@ -73,66 +107,40 @@ package
 		protected function initMain(e:Event):void
 		{
 			// process xml first and load available data
-			trace("process xml");			
+			trace("EZflarg::initMain(): process xml");			
 			loadPatterns(e);
 
 			// setup ezflar
-			trace("initialize ezflar");
+			trace("EZflarg::initMain(): initialize ezflar");
 			_ezflar = new EZflarEx(_configuration);
 			
 			_ezflar.initializer(stage, _resourcePath);
 			_ezflar.customizeNoCam("sorry no cam...", 0xFFFFFF, 0x444444 );			
-
-			_ezflar.onStarted(function():void 
-			{
-				trace("EZflarg::onStarted");
-			});
 			
-			/**
-				this callback gets called before the onAdded callback.if a _markerMode is existing, its detect method gets called.
-				detect calls another callback of this class. that callback may change the event argument, i.e to prevent that the
-				object attached to the marker gets displayed. if no _markerMode is available, onPreAdded just returns the received
-				event without altering it.
+			_ezflar.onStarted		(_callbackEzFlarOnStarted);
+			_ezflar.onPreAdded		(_callbackEzFlarOnPreAdded);
+			_ezflar.onAdded			(_callbackEzFlarOnAdded);
+			_ezflar.onUpdated		(_callbackEzFlarOnUpdated);
+			_ezflar.onRemoved		(_callbackEzFlarOnRemoved);	
+			_ezflar.onMarkerClicked		(_callbackEzFlarOnMarkerClicked);
+			_ezflar.onMarkerMouseOver	(_callbackEzFlarOnMarkerMouseOver);
+			_ezflar.onMarkerMouseOut	(_callbackEzFlarOnMarkerMouseOut);
+
+			/** 	add a timed message screen to the scene in order 
+				to show messages that disappear automatically
 			*/
-			_ezflar.onPreAdded(function(event:FLARMarkerEvent):FLARMarkerEvent 
-			{
-				trace("EZflarg::onPreAdded: " + event.marker.patternId)
-				return event;
-			});
+			_msgScreen = new MessageScreenTimed(_widthMessageScreen, _heightMessageScreen, _colorErrorScreenTxt, _colorErrorScreenBack);
+			_ezflar.addModelToScene(_msgScreen);
 
-			_ezflar.onAdded(function(event:FLARMarkerEvent):void 
+			/** 	before we proceed we dispatch the display time callback of the sequence mode (if existent)
+				in order to setup the display time of the messages displayed in sequence mode. the _msgScreen	
+				member must have been created already in order to receive the new display time
+			*/
+			var seqMode:MarkerSequenceMode = _markerMode as MarkerSequenceMode;
+			if( seqMode != null )
 			{
-				trace("EZflarg::onAdded: " + event.marker.patternId);
-
-				if( _markerMode != null )
-				{
-					event = _markerMode.detected( _ezflar.patternName(event.marker.patternId), event );
-				}
-						
-			});
-			
-			_ezflar.onUpdated(function(marker:FLARMarkerEvent):void 
-			{});
-
-			_ezflar.onRemoved(function(marker:FLARMarkerEvent):void 
-			{
-				trace("EZflarg::onRemoved: " + marker.marker.patternId);
-			});	
-
-			_ezflar.onMarkerClicked( function(event:PatternNameEvent):void
-			{
-				loadUrlOnClicked(event);
-			});
-
-			_ezflar.onMarkerMouseOver( function(event:PatternNameEvent):void
-			{
-				markerMouseOver(event);
-			});
-
-			_ezflar.onMarkerMouseOut( function(event:PatternNameEvent):void
-			{
-				markerMouseOut(event);
-			});
+				seqMode.dispatchDisplayTime();
+			} 
 		}
 
 		protected function markerMouseOver(event:PatternNameEvent):void
@@ -145,10 +153,6 @@ package
 			trace("EZflarEx::markerMouseOut for pattern [" + event.patternName + "]");
 		}	
 		
-		/**
-			FIXME: no hardcoded stuff in here. for the moment ok but later on those information must be loaded
-			through an xml file
-		*/
 		protected function loadUrlOnClicked(event:PatternNameEvent):void
 		{
 			trace("EZflarEx::loadObjects for pattern [" + event.patternName + "]");
@@ -193,55 +197,11 @@ package
 				var sequenceMode:MarkerSequenceMode = _markerMode as MarkerSequenceMode;
 				if(sequenceMode != null)
 				{
-					sequenceMode.onDetection
-					(
-						function(markerName:String, event:FLARMarkerEvent):FLARMarkerEvent
-						{
-							trace("EZflarg::onDetection: " + event.marker.patternId);
-							_ezflar.getObject(event.marker.patternId, markerName).visible = true;
-							return event;
-						}						
-					);
-					
-					sequenceMode.onNotNextInSequence
-					(
-						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
-						{
-							trace("EZflarg::onNotNextInSequence: " + event.marker.patternId);
-							
-							/**
-								for now it is assumed that the returned object is a DisplayObject3D.
-								this may true if the current marker represents a graohic object.
-								in case the marker represents a link there will be probably the problem
-								that the link cant be made "invisible" and may get invoked anyway.
-								this function is supposed to prevent that as well as showing images, but it
-								may currently fail in disabling urls, audio, etc.
-							*/
-							_ezflar.getObject(event.marker.patternId, markerName).visible = false;
-
-							return event;
-						}
-					);
-
-					sequenceMode.onMarkerPreviouslyDetected
-					(
-						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
-						{
-							trace("EZflarg::onMarkerPreviouslyDetected: " + event.marker.patternId);
-							_ezflar.getObject(event.marker.patternId, markerName).visible = false;
-							return event;
-						}
-					);
-
-					sequenceMode.onMarkerAlreadyDetected
-					(
-						function(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
-						{
-							trace("EZflarg::onMarkerAlreadyDetected: " + event.marker.patternId);
-							_ezflar.getObject(event.marker.patternId, markerName).visible = true;
-							return event;
-						}
-					);
+					sequenceMode.onDetection		(_callbackSequenceModeOnDetection);
+					sequenceMode.onNotNextInSequence	(_callbackSequenceModeOnNotNextInSequence);
+					sequenceMode.onMarkerPreviouslyDetected	(_callbackSequenceModeOnMarkerPreviouslyDetected);
+					sequenceMode.onMarkerAlreadyDetected	(_callbackSequenceModeOnMarkerAlreadyDetected);
+					sequenceMode.onDisplayTimeSet		(_callbackSequenceModeOnDisplayTimeSet);
 				}
 			}
 		}
@@ -256,7 +216,6 @@ package
 		protected function loadXmlFiles(e:Event):void
 		{
 			var filesLoaderXML:FileLoaderXML = new FileLoaderXML();
-			// var files:Array = filesLoaderXML.load(e.target.data) as Array;
 			_files = filesLoaderXML.load(e.target.data) as FileHolder;
 			_files.resourcePath = _resourcePath;
 			
@@ -297,21 +256,122 @@ package
 			xmlLoader.load(new URLRequest(_files.objectsFile));
 		}
 
-		public function EZflarg() 
+		//*****************************
+		// callbacks
+		//*****************************
+
+		protected function callbackEzFlarOnStarted():void
 		{
-			// setup a callback for the external interface in order to communicate
-			// from the outside world (a html page) with this application
-			ExternalInterface.addCallback("sendTextToFlash", getTextFromJavaScript);
+			trace("EZflarg::onStarted()");
+		}
+
+		/**
+			this callback gets called before the onAdded callback.if a _markerMode is existing, its detect method gets called.
+			detect calls another callback of this class. that callback may change the event argument, i.e to prevent that the
+			object attached to the marker gets displayed. if no _markerMode is available, onPreAdded just returns the received
+			event without altering it.
+		*/
+		protected function callbackEzFlarOnPreAdded(event:FLARMarkerEvent):FLARMarkerEvent
+		{
+			trace("EZflarg::onPreAdded() markerID[" + event.marker.patternId + "]")
+			return event;
+		}
+	
+		protected function callbackEzFlarOnAdded(event:FLARMarkerEvent):void
+		{
+			trace("EZflarg::onAdded() markerID[" + event.marker.patternId + "]");
+
+			if( _markerMode != null )
+			{
+				event = _markerMode.detected( _ezflar.patternName(event.marker.patternId), event );
+			}
+		}
+	
+		protected function callbackEzFlarOnUpdated(event:FLARMarkerEvent):void
+		{
+			trace("EZflarg::onUpdated() markerID[" + event.marker.patternId + "]");
+		}
+
+		protected function callbackEzFlarOnRemoved(event:FLARMarkerEvent):void
+		{
+			trace("EZflarg::onRemoved() markerID[" + event.marker.patternId + "]");
+		}
+
+		protected function callbackEzFlarOnMarkerClicked(event:PatternNameEvent):void
+		{
+			trace("EZflarg::onMarkerClicked()");
+			loadUrlOnClicked(event);
+		}
+
+		protected function callbackEzFlarOnMarkerMouseOver(event:PatternNameEvent):void
+		{
+			trace("EZflarg::onMarkerMouseOver()");
+			markerMouseOver(event);
+		}
+
+		protected function callbackEzFlarOnMarkerMouseOut(event:PatternNameEvent):void
+		{
+			trace("EZflarg::onMarkerMouseOut()");
+			markerMouseOut(event);
+		}
+
+		protected function callbackSequenceModeOnDetection(markerName:String, event:FLARMarkerEvent):FLARMarkerEvent
+		{
+			trace("EZflarg::onDetection() markerId[" + event.marker.patternId + "]");
+			_ezflar.getObject(event.marker.patternId, markerName).visible = true;
+			return event;
+		}
+
+		protected function callbackSequenceModeOnNotNextInSequence(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
+		{
+			trace("EZflarg::onNotNextInSequence() markerId[" + event.marker.patternId + "]");
 			
-			// the files.xml file must be loaded first because it determines which config and pattern
-			// files will be loaded afterwards. thus, all further loading is done in loadXmlFiles()
-			var fileLoader:URLLoader = new URLLoader();
+			/**
+				for now it is assumed that the returned object is a DisplayObject3D.
+				this may true if the current marker represents a graohic object.
+				in case the marker represents a link there will be probably the problem
+				that the link cant be made "invisible" and may get invoked anyway.
+				this function is supposed to prevent that as well as showing images, but it
+				may currently fail in disabling urls, audio, etc.
+			*/
+			_ezflar.getObject(event.marker.patternId, markerName).visible = false;
 			
-			fileLoader.addEventListener(Event.COMPLETE, loadXmlFiles);
-			fileLoader.addEventListener(IOErrorEvent.IO_ERROR, onIoErrorloadXmlFiles);
-			fileLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityErrorXmlFiles);
-			
-			fileLoader.load(new URLRequest(_filesFile));
+			displayMessage(message);
+			return event;
+		}
+
+		protected function callbackSequenceModeOnMarkerPreviouslyDetected(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
+		{
+			trace("EZflarg::onMarkerPreviouslyDetected() markerId[" + event.marker.patternId + "]");
+			_ezflar.getObject(event.marker.patternId, markerName).visible = false;
+			displayMessage(message);
+			return event;
+		}
+
+		protected function callbackSequenceModeOnMarkerAlreadyDetected(markerName:String, event:FLARMarkerEvent, message:String):FLARMarkerEvent
+		{
+			trace("EZflarg::onMarkerAlreadyDetected() markerId[" + event.marker.patternId + "]");
+			_ezflar.getObject(event.marker.patternId, markerName).visible = true;
+			return event;
+		}
+
+		protected function callbackSequenceModeOnDisplayTimeSet(displayTime:uint):void
+		{
+			trace("EZflarg::onDisplayTimeSet() time[" + displayTime + "]");
+			if( _msgScreen != null )
+			{ 
+				_msgScreen.displayTime = displayTime;
+			}
+		}
+
+		/**
+			this functions gets called from an external html page in order to exchange user interaction
+			information. the information are dispatched here and can be used for example to alter the 
+			logic of the game according to interaction in the external html page
+		*/
+		protected function getTextFromJavaScript(str:String):void 
+		{
+			trace("EZflarg::getTextFromJavaScript(): received text[" + str + "]");
 		}
 
 		protected function onIoErrorloadXmlFiles(ioError:IOErrorEvent):void
@@ -321,32 +381,21 @@ package
 
 		protected function onSecurityErrorXmlFiles(securityError:SecurityErrorEvent):void
 		{
-			displayDecurityError(securityError);
+			displaySecurityError(securityError);
 		}
 		
-		/**
-			this functions gets called from an external html page in order to exchange user interaction
-			information. the information are dispatched here and can be used for example to alter the 
-			logic of the game according to interaction in the external html page
-		*/
-		protected function getTextFromJavaScript(str:String):void 
-		{
-			trace("EZflarg::getTextFromJavaScript: received text[" + str + "]");
-		}
 
-		protected function displayDecurityError(securityError:SecurityErrorEvent):void
+		protected function displaySecurityError(securityError:SecurityErrorEvent):void
 		{
-			var startScreenLayout:StartScreenLayout = new StartScreenLayout();
-			
+			trace("EZflarg::displayDecurityError(): [" + securityError + "]");
 			var msg:String = "Sorry, but we cannot proceed because a security error occured\n" + securityError;
-			startScreenLayout.addElement( 100, 150, constructTextArea(300, 75, msg) );
-	
-			displayScreen(startScreenLayout);
+			displayErrorScreen(msg);
 		}
 
 		protected function displayIoError( ioError:IOErrorEvent ):void
 		{
-			var startScreenLayout:StartScreenLayout = new StartScreenLayout();
+			trace("EZflarg::displayIoError(): [" + ioError + "]");
+			
 			var fileName:String = ioError.toString();
 			var startIndex:int = fileName.search("URL:")
 			var endIndex:int = fileName.search(']')-1;
@@ -356,36 +405,24 @@ package
 				fileName = fileName.slice(startIndex, endIndex);
 			}
 			var msg:String = "Sorry, but we cannot proceed because an error occured while loading\n" + fileName;
-			startScreenLayout.addElement( 100, 150, constructTextArea(300, 75, msg) );
-	
-			displayScreen(startScreenLayout);
+			
+			displayErrorScreen(msg);			
 		}
 		
-		protected function displayScreen(layout:StartScreenLayout):void
+		protected function displayErrorScreen(msg:String):void
 		{
-			var _screen:StartScreen = new StartScreen();
-			_screen.init(400, 200, 50, 50, 0x444444, layout);
-			this.addChild(_screen);
+			var screen:MessageScreen = new MessageScreen(_widthErrorScreen, _heightErrorScreen, _colorErrorScreenTxt, _colorErrorScreenBack);
+			screen.show(msg);
+			this.addChild(screen);
 		}
 
-		protected function constructTextArea(width:uint, height:uint, msg:String):TextField
-		{
-			var format:TextFormat = new TextFormat;
-			format.size = 10;
-
-			var textArea:TextField = new TextField(); 
-			textArea.border = true;
-			textArea.background = true;
-			textArea.backgroundColor = 0xFFFFFF;			
-			textArea.textColor = 0x000000;			
-			textArea.height = height;
-			textArea.width = width;	 
-			textArea.condenseWhite = true;
-			textArea.multiline = true;
-			textArea.wordWrap = true;			
-			textArea.text = msg;
-			textArea.setTextFormat(format);			
-			return textArea;
+		protected function displayMessage(msg:String):void
+		{	
+			// the message screen dissappears automatically after the adjusted period of time
+			if( _msgScreen != null )
+			{
+				_msgScreen.show(msg);
+			}
 		}
 	}
 }

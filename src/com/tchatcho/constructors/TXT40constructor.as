@@ -13,7 +13,8 @@ package com.tchatcho.constructors {
 
 	import com.tchatcho.constructors.ILoadingEZFLAR;
 
-	public class TXT40constructor extends MovieClip {
+	public class TXT40constructor extends MovieClip 
+	{
 		private var _universe:DisplayObject3D = new DisplayObject3D();
 		
 		public function TXT40constructor( patternId:int
@@ -50,17 +51,22 @@ package com.tchatcho.constructors {
 			front_plane.y                        = -120;
 			this._universe.addChild(front_plane);
 			
-			if(objName != null){
+			if(objName != null)
+			{
 				this._universe.name = objName
-				}else{
-					this._universe.name = "universe"
-					}
-					this._universe.rotationY = 0;
-					this._universe.rotationZ = -90;
+			}
+			else
+			{
+				this._universe.name = "universe"
+			}
+			this._universe.rotationY = 0;
+			this._universe.rotationZ = -90;
 
-				}
-				public function get object():DisplayObject3D{
-					return this._universe;
-				}
+		}
+
+		public function get object():DisplayObject3D
+		{
+			return this._universe;
 		}
 	}
+}

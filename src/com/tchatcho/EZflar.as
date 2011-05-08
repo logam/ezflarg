@@ -29,7 +29,7 @@ package com.tchatcho {
 	import com.tchatcho.Base_model;
 	import flash.media.Camera;
 	import flash.events.*;
-    import com.tchatcho.NoCamera;
+    	import com.tchatcho.NoCamera;
 
 	//to handle objects from outside
 	import com.transmote.flar.FLARMarker;
