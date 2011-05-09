@@ -58,7 +58,7 @@ package
 		protected var _colorErrorScreenBack:uint= 0x444444;		
 		
 		protected var _markerMode:IMode; 
-		protected var _msgDisplayTime:int	= 5000; // 5 seconds
+		// protected var _msgDisplayTime:int	= 5000; // 5 seconds
 		protected var _msgScreen:MessageScreenTimed;
 
 		/**	callbacks that can be assigned to various objects

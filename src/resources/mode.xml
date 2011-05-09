@@ -25,7 +25,8 @@
 			</PreviouslyDetected>
 			<WrongOrder>
 				<Message>Du hast Marker ausgelassen! Finde die anderen zuerst.</Message>
-			</WrongOrder>			
+			</WrongOrder>
+			<DisplayTime>5000</DisplayTime>			
 		</Error>
 	</OrderedSequence>
 -->

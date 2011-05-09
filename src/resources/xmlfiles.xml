@@ -14,4 +14,9 @@
 		currently not used		
 	-->
 	<mode>mode.xml</mode>
+
+	<!-- 	the xml file that describes the actions that are executed on mouse events
+		on a marker
+	-->
+	<action>actions.xml</action>
 </xmlfiles>

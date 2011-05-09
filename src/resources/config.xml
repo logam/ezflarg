@@ -78,5 +78,4 @@
 	-->
 	<markerUpdateThreshold>50</markerUpdateThreshold>
 
-	<contentPath>your path</contentPath>
 </Configuration>
