@@ -36,7 +36,7 @@ package
 	import com.quilombo.ActionDispatcher;
 	import com.quilombo.IMode;
 
-	import flash.external.ExternalInterface;
+	// import flash.external.ExternalInterface;
 
 
 	public class EZflarg extends MovieClip 
@@ -44,7 +44,7 @@ package
 		protected var _ezflar:EZflarEx;
 		protected var _configuration:ConfigHolder;
 		protected var _actionDispatcher:ActionDispatcher;
-		protected var _externalHtmlCallback:Function = getTextFromJavaScript;
+		// protected var _externalHtmlCallback:Function = getTextFromJavaScript;
 		
 		protected var _resourcePath:String 	= "./resources/";
 		protected var _filesFile:String		= _resourcePath + "xmlfiles.xml";		
@@ -83,7 +83,7 @@ package
 			/**	setup a callback for the external interface in order to communicate
 				from the outside world (a html page) with this application
 			*/
-			ExternalInterface.addCallback("sendTextToFlash", getTextFromJavaScript);
+			// ExternalInterface.addCallback("sendTextToFlash", getTextFromJavaScript);
 			
 			/**	the files.xml file must be loaded first because it determines which config and pattern
 				files will be loaded afterwards. thus, all further loading is done in loadXmlFiles()

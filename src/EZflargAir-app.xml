@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<application xmlns="http://ns.adobe.com/air/application/2.6"> 
+    <id>samples.android.EZflarg</id> 
+    <versionNumber>0.0.1</versionNumber> 
+    <filename>EZflarg</filename> 
+    <initialWindow> 
+        <content>EZflargAir.swf</content> 
+    </initialWindow> 
+    <supportedProfiles>mobileDevice</supportedProfiles> 
+</application>
+
+<!--
+
+#
+
+Create an XML file named HelloWorld-app.xml and save it in the project directory.
+#
+
+Add the <application> element, including the AIR namespace attribute:
+
+<application xmlns="http://ns.adobe.com/air/application/2.7"> The last segment of the namespace, “2.7,” specifies the version of the runtime required by the application.
+#
+
+Add the <id> element:
+
+<id>samples.android.HelloWorld</id> The application ID uniquely identifies your application along with the publisher ID (which AIR derives from the certificate used to sign the application package). The recommended form is a dot-delimited, reverse-DNS-style string, such as "com.company.AppName".
+#
+
+Add the <versionNumber> element:
+
+<versionNumber>0.0.1</versionNumber> Helps users to determine which version of your application they are installing.
+#
+
+Add the <filename> element:
+
+<filename>HelloWorld</filename> The name used for the application executable, install directory, and similar for references in the operating system.
+#
+
+Add the <initialWindow> element containing the following child elements to specify the properties for your initial application window:
+
+<content>HelloWorld.swf</content> Identifies the root HTML file for AIR to load.
+#
+
+Add the <supportedProfiles> element.
+
+<supportedProfiles>mobileDevice</supportedProfiles> Specifies that the application only runs in the mobile profile.
+#
+
+Save the file. Your complete application descriptor file should look like this: 
+-->
