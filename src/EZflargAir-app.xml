@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <application xmlns="http://ns.adobe.com/air/application/2.6"> 
     <id>samples.android.EZflarg</id> 
-    <versionNumber>0.0.1</versionNumber> 
+    <versionNumber>0.0.2</versionNumber> 
     <filename>EZflarg</filename> 
     <initialWindow> 
         <content>EZflargAir.swf</content> 
     </initialWindow> 
-    <supportedProfiles>mobileDevice</supportedProfiles> 
+    <supportedProfiles>mobileDevice</supportedProfiles>
+    <android> 
+    	<manifestAdditions> 
+    	    <![CDATA[ 
+    	        <manifest> 
+    	            <uses-permission android:name="android.permission.CAMERA" /> 
+    	            <uses-permission android:name="android.permission.DISABLE_KEYGUARD" /> 
+    	        </manifest> 
+    	    ]]> 
+	</manifestAdditions> 
+    </android>
 </application>
 
 <!--
