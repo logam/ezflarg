@@ -10,7 +10,7 @@ package
 	import flash.net.URLRequest;
 
 	import flash.display.MovieClip;
-	
+	import flash.system.Capabilities;
 	import mx.utils.ObjectUtil;
 	 
 	//tcha-tcho.com
@@ -22,8 +22,7 @@ package
 	// own stuff
 	import com.quilombo.constructors.PatternNameEvent;
 	import com.quilombo.display.MessageScreen;
-	import com.quilombo.display.MessageScreenTimed;
-	
+	import com.quilombo.display.MessageScreenTimed;	
 	import com.quilombo.EZflarEx;
 	import com.quilombo.ConfigHolder;
 	import com.quilombo.FileHolder;
@@ -46,8 +45,12 @@ package
 		protected var _actionDispatcher:ActionDispatcher;
 		// protected var _externalHtmlCallback:Function = getTextFromJavaScript;
 		
-		protected var _resourcePath:String 	= "./resources/";
-		protected var _filesFile:String		= _resourcePath + "xmlfiles.xml";		
+		// protected var _resourcePath:String 	= "./resources/";
+		// protected var _filesFile:String		= _resourcePath + "xmlfiles.xml";		
+		
+		protected var _resourcePath:String;
+		protected var _filesFile:String;
+
 		protected var _files:FileHolder;
 
 		protected var _widthErrorScreen:int	= 400;
@@ -79,7 +82,11 @@ package
 		protected var _callbackSequenceModeOnDisplayTimeSet:Function		= callbackSequenceModeOnDisplayTimeSet;
 		
 		public function EZflarg() 
-		{
+		{	
+			trace("EZflarg::EZflarg detected operating system [" + Capabilities.os + "]");
+			_resourcePath = resourcePath;
+			_filesFile = _resourcePath + "xmlfiles.xml";
+
 			/**	setup a callback for the external interface in order to communicate
 				from the outside world (a html page) with this application
 			*/
@@ -141,6 +148,8 @@ package
 			{
 				seqMode.dispatchDisplayTime();
 			} 
+			// just for testing purposes, display current operating system
+			displayMessage( Capabilities.os );
 		}
 
 		protected function markerMouseOver(event:PatternNameEvent):void
@@ -254,6 +263,33 @@ package
 			xmlLoader.addEventListener(IOErrorEvent.IO_ERROR, onIoErrorloadXmlFiles);
 			xmlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityErrorXmlFiles);
 			xmlLoader.load(new URLRequest(_files.objectsFile));
+		}
+
+		//*****************************
+		// getters
+		//*****************************
+
+		protected function get resourcePath():String
+		{	
+			var path:String;
+
+			var platform:String = Capabilities.os;
+			var linux:RegExp = new RegExp("Linux.*", "i");
+			var windows:RegExp = new RegExp("Windows.*", "i");
+			var mac:RegExp= new RegExp("Max.*", "i");
+
+			if( linux.exec(platform) != null 
+			||  windows.exec(platform) != null
+			||  mac.exec(platform) != null)
+			{
+				path = "./resources/";
+			}
+			else // android
+			{
+				// hardcoded, not nice!!
+				path = "/mnt/sdcard/ezflarg/resources/";
+			}
+			return path;
 		}
 
 		//*****************************

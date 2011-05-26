@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <application xmlns="http://ns.adobe.com/air/application/2.6"> 
     	<id>samples.android.EZflarg</id> 
-    	<versionNumber>0.0.3</versionNumber> 
+    	<versionNumber>0.0.4</versionNumber> 
     	<filename>EZflarg</filename> 
     	<initialWindow> 
         	<content>EZflargAir.swf</content> 
   		<autoOrients>false</autoOrients>
-	    	<aspectRatio>portait</aspectRatio>
+	    	<aspectRatio>portrait</aspectRatio>
 	</initialWindow> 
     	<supportedProfiles>mobileDevice</supportedProfiles>
     	<android> 
