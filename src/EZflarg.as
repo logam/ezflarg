@@ -87,6 +87,11 @@ package
 			_resourcePath = resourcePath;
 			_filesFile = _resourcePath + "xmlfiles.xml";
 
+			// just for testing purposes, display current operating system
+			var msgString:String = "platform [" + Capabilities.os + "]\n" 
+					+ "resource path [" + _resourcePath + "]";			
+			displayErrorScreen( msgString );
+
 			/**	setup a callback for the external interface in order to communicate
 				from the outside world (a html page) with this application
 			*/
@@ -148,8 +153,6 @@ package
 			{
 				seqMode.dispatchDisplayTime();
 			} 
-			// just for testing purposes, display current operating system
-			displayMessage( Capabilities.os );
 		}
 
 		protected function markerMouseOver(event:PatternNameEvent):void
