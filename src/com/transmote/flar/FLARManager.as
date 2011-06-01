@@ -174,12 +174,12 @@ package com.transmote.flar {
 		
 		
 		//-----<MARKER DETECTION>----------------------------//
-		private function onEnterFrame (evt:Event) :void {
+		/*private*/ protected function onEnterFrame (evt:Event) :void {
 			if (!this.updateSource()) { return; }
 			this.detectMarkers();
 		}
 		
-		private function updateSource () :Boolean {
+		/*private*/ protected function updateSource () :Boolean {
 			try {
 				// ensure this.flarRaster has been initialized
 				if (this.flarRaster == null) {
@@ -195,20 +195,29 @@ package com.transmote.flar {
 			return true;
 		}
 		
-		private function detectMarkers () :void {
+		/*private*/ protected function detectMarkers () :void 
+		{
 			var numFoundMarkers:int = 0;
 				
-			try {
+			try 
+			{
 				// detect marker(s)
-				numFoundMarkers = this.markerDetector.detectMarkerLite(this.flarRaster, this.threshold);
-			} catch (e:FLARException) {
+				numFoundMarkers = this.markerDetector.detectMarkerLite(
+								this.flarRaster, 
+								this.threshold);
+			} 
+			catch (e:FLARException) 
+			{
 				// error in FLARToolkit processing; send to console
 				trace(e);
 				return;
 			}
 			
 			//trace("numFoundMarkers:"+numFoundMarkers);
-			if (numFoundMarkers == 0) { return; }
+			if (numFoundMarkers == 0) 
+			{ 
+				return; 
+			}
 			
 			// build list of detected markers
 //			var detectedMarkers:Vector.<FLARMarker> = new Vector.<FLARMarker>();
@@ -220,13 +229,16 @@ package com.transmote.flar {
 			var outline:FLARMarkerOutline;
 			var transmat:FLARTransMatResult;
 			var i:uint = numFoundMarkers;
-			while (i--) {
+			while (i--) 
+			{
 				detectedMarkerResult = this.markerDetector.getResult(i);
 				patternIndex = this.markerDetector.getARCodeIndex(i);
 				detectedPattern = this.allPatterns[patternIndex];
 				confidence = this.markerDetector.getConfidence(i);
-				if (confidence < detectedPattern._minConfidence) {
-					// detected marker's confidence is below the minimum required confidence for its pattern.
+				if (confidence < detectedPattern._minConfidence) 
+				{
+					// detected marker's confidence is below 
+					// the minimum required confidence for its pattern.
 					continue;
 				}
 				
@@ -238,7 +250,11 @@ package com.transmote.flar {
 					detectedMarkerResult.square.imvertex,
 					detectedMarkerResult.square.label);
 				
-				detectedMarkers.push(new FLARMarker(patternIndex, detectedMarkerResult.direction, confidence, outline, transmat));
+				detectedMarkers.push(new FLARMarker(patternIndex, 
+					detectedMarkerResult.direction, 
+					confidence, 
+					outline, 
+					transmat));
 			}
 			
 			// compare detected markers against active markers
@@ -253,42 +269,59 @@ package com.transmote.flar {
 //			var newMarkers:Vector.<FLARMarker> = new Vector.<FLARMarker>();
 			var updatedMarkers:Array = new Array();
 			var newMarkers:Array = new Array();
-			while (i--) {
+			
+			while (i--) 
+			{
 				j = this._activeMarkers.length;
 				detectedMarker = detectedMarkers[i];
 				closestMarker = null;
 				closestDist = Number.POSITIVE_INFINITY;
-				while (j--) {
+				while (j--) 
+				{
 					activeMarker = this._activeMarkers[j];
-					if (detectedMarker._patternId == activeMarker._patternId) {
-						dist = Point.distance(detectedMarker.outline._centerpoint, activeMarker.outline._centerpoint);
-						if (dist < closestDist && dist < _markerUpdateThreshold) {
+					if (detectedMarker._patternId == activeMarker._patternId) 
+					{
+						dist = Point.distance(	detectedMarker.outline._centerpoint, 
+									activeMarker.outline._centerpoint);
+
+						if (dist < closestDist && dist < _markerUpdateThreshold) 
+						{
 							closestMarker = activeMarker;
 							closestDist = dist;
 						}
 					}
 				}
 				
-				if (closestMarker) {
+				if (closestMarker) 
+				{
 					// updated marker
 					closestMarker.copy(detectedMarker);
 					updatedMarkers.push(closestMarker);
-					this.dispatchEvent(new FLARMarkerEvent(FLARMarkerEvent.MARKER_UPDATED, closestMarker));
-				} else {
+					this.dispatchEvent(
+						new FLARMarkerEvent(
+							FLARMarkerEvent.MARKER_UPDATED, closestMarker));
+				} else 
+				{
 					// new marker
 					newMarkers.push(detectedMarker);
-					this.dispatchEvent(new FLARMarkerEvent(FLARMarkerEvent.MARKER_ADDED, detectedMarker));
+					this.dispatchEvent(
+						new FLARMarkerEvent(
+							FLARMarkerEvent.MARKER_ADDED, detectedMarker));
 				}
 			}
 			
 			i = this._activeMarkers.length;
 			var removedMarker:FLARMarker;
-			while (i--) {
+			while (i--) 
+			{
 				activeMarker = this._activeMarkers[i];
-				if (updatedMarkers.indexOf(activeMarker) == -1) {
+				if (updatedMarkers.indexOf(activeMarker) == -1) 
+				{
 					// removed marker
 					removedMarker = this._activeMarkers.splice(i, 1)[0];
-					this.dispatchEvent(new FLARMarkerEvent(FLARMarkerEvent.MARKER_REMOVED, removedMarker));
+					this.dispatchEvent(
+						new FLARMarkerEvent(
+							FLARMarkerEvent.MARKER_REMOVED, removedMarker));
 				}
 			}
 			

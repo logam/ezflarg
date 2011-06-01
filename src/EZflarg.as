@@ -8,11 +8,13 @@ package
 	
 	import flash.net.URLLoader;	
 	import flash.net.URLRequest;
+	import flash.net.FileFilter;
 
 	import flash.display.MovieClip;
 	import flash.system.Capabilities;
+	import flash.filesystem.File;
+	
 	import mx.utils.ObjectUtil;
-	 
 	//tcha-tcho.com
 	import com.tchatcho.EZflar;	
 
@@ -44,9 +46,6 @@ package
 		protected var _configuration:ConfigHolder;
 		protected var _actionDispatcher:ActionDispatcher;
 		// protected var _externalHtmlCallback:Function = getTextFromJavaScript;
-		
-		// protected var _resourcePath:String 	= "./resources/";
-		// protected var _filesFile:String		= _resourcePath + "xmlfiles.xml";		
 		
 		protected var _resourcePath:String;
 		protected var _filesFile:String;
@@ -84,13 +83,32 @@ package
 		public function EZflarg() 
 		{	
 			trace("EZflarg::EZflarg detected operating system [" + Capabilities.os + "]");
-			_resourcePath = resourcePath;
-			_filesFile = _resourcePath + "xmlfiles.xml";
+			_resourcePath = resourcePath.nativePath;
+			_filesFile = filesPath.nativePath;
 
+/*
+			var testFile:File = new File(_resourcePath);
+			try
+			{
+				
+				var dirs:Array = testFile.getDirectoryListing();
+				var dirsStr:String = new String(_filesFile);
+				for (var i:uint = 0; i < dirs.length; i++) 
+				{
+    					dirsStr += dirs[i].nativePath + "\n";
+				}
+				displayErrorScreen(dirsStr);
+				
+			}
+			catch(error:Error)
+			{
+				displayErrorScreen(error.message + "\n" + testFile.nativePath)
+			}
+*/
 			// just for testing purposes, display current operating system
-			var msgString:String = "platform [" + Capabilities.os + "]\n" 
-					+ "resource path [" + _resourcePath + "]";			
-			displayErrorScreen( msgString );
+			// var msgString:String = "platform [" + Capabilities.os + "]\n" 
+			//		+ "resource path [" + _resourcePath + "]";			
+			// displayErrorScreen( msgString );
 
 			/**	setup a callback for the external interface in order to communicate
 				from the outside world (a html page) with this application
@@ -272,27 +290,15 @@ package
 		// getters
 		//*****************************
 
-		protected function get resourcePath():String
+		public function get resourcePath():File
 		{	
-			var path:String;
+			return File.userDirectory.resolvePath("ezflarg/resources");
+			// return "./resources/";
+		}
 
-			var platform:String = Capabilities.os;
-			var linux:RegExp = new RegExp("Linux.*", "i");
-			var windows:RegExp = new RegExp("Windows.*", "i");
-			var mac:RegExp= new RegExp("Max.*", "i");
-
-			if( linux.exec(platform) != null 
-			||  windows.exec(platform) != null
-			||  mac.exec(platform) != null)
-			{
-				path = "./resources/";
-			}
-			else // android
-			{
-				// hardcoded, not nice!!
-				path = "/mnt/sdcard/ezflarg/resources/";
-			}
-			return path;
+		public function get filesPath():File
+		{
+			return resourcePath.resolvePath("xmlfiles.xml");
 		}
 
 		//*****************************
@@ -443,7 +449,11 @@ package
 			{
 				fileName = fileName.slice(startIndex, endIndex);
 			}
-			var msg:String = "Sorry, but we cannot proceed because an error occured while loading\n" + fileName;
+			var msg:String  = "Sorry, but we cannot proceed because an error occured while loading "
+					+ "[" + fileName + "]\n" 
+					/* + "[" + ioError.toString() + "]\n" */ 					
+					+ "from resource path [" + _resourcePath + "]\n"
+					+ "on platform [" + Capabilities.os + "]\n";
 			
 			displayErrorScreen(msg);			
 		}

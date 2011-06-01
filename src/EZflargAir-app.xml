@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <application xmlns="http://ns.adobe.com/air/application/2.6"> 
     	<id>samples.android.EZflarg</id> 
-    	<versionNumber>0.0.5</versionNumber> 
+    	<versionNumber>0.0.14</versionNumber> 
     	<filename>EZflarg</filename> 
     	<initialWindow> 
         	<content>EZflargAir.swf</content> 
-  		<autoOrients>false</autoOrients>
+  		<autoOrients>true</autoOrients>
 	    	<aspectRatio>portrait</aspectRatio>
 	</initialWindow> 
-    	<supportedProfiles>mobileDevice</supportedProfiles>
+    	<supportedProfiles>mobileDevice desktop</supportedProfiles>
     	<android> 
     		<manifestAdditions> 
     	    		<![CDATA[ 
-    	        		<manifest> 
+    	        		<manifest android:installLocation="preferExternal"> 
 					<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> 
     	            			<uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     	            			<uses-permission android:name="android.permission.CAMERA" /> 
 					<uses-feature android:name="android.hardware.camera" android:required="true"/> 
                 			<uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/> 
-                			<uses-feature android:name="android.hardware.camera.flash" android:required="false"/> 
-					<manifest android:installLocation="preferExternal"/> 
+                			<uses-feature android:name="android.hardware.camera.flash" android:required="false"/>
+					<uses-configuration android:reqTouchScreen="finger"/> 
     	        		</manifest> 
     	    		]]> 
 		</manifestAdditions> 

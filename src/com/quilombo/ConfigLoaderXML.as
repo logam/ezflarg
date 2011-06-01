@@ -98,20 +98,20 @@ package com.quilombo
 					configuration.markerUpdateThreshold = val.text();
 					continue;
 				}
-/*
-				if ( val.name() == "contentPath")
-				{
-					trace("ConfigLoaderXML::load() found contentPath [" + val.text() + "]");
-					configuration.contentPath = val.text();
-					continue;
-				}
-*/
 				
 				if ( val.name() == "mousehandling")
 				{
 					trace("ConfigLoaderXML::load() found mouseHandling [" + val.text() + "]");
 					configuration.mouseHandling = val.text();
 					continue;
+				}
+
+				if ( val.name() == "skipMarkerDetectionFrames" )
+				{
+					trace("ConfigLoaderXML::load() found skipMarkerDetectionFrames [" + val.text() + "]");
+					configuration.skipMarkerDetectionFrames = val.text();
+					continue;
+
 				}				
 			}
 
@@ -151,8 +151,8 @@ package com.quilombo
 			_configuration.patternMinConfidence	= 0.5;
 			_configuration.unscaledMarkerWidth	= 80;
 			_configuration.markerUpdateThreshold	= 20;
-			// _configuration.contentPath		= "";
 			_configuration.mouseHandling		= true;
+			_configuration.skipMarkerDetectionFrames= 0;
 		}
 	} 
 }

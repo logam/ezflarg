@@ -4,18 +4,22 @@ package com.quilombo
 	import flash.media.Camera;
 
 	import flash.display.MovieClip;
-
+	
+	import com.transmote.flar.FLARManager;
 	import com.transmote.flar.FLARMarkerEvent;
+	import com.transmote.flar.IFLARSource;
 	import com.tchatcho.constructors.URLconstructor;
 	import com.tchatcho.Base_model;
 	import com.tchatcho.EZflar;
-
+	
+	import com.quilombo.flar.FLARManagerEx;
 	import com.quilombo.ConfigHolder;
 	import com.quilombo.BaseModelEx;
 	import com.quilombo.constructors.LoadingEzflarEx;
 	
 	import com.quilombo.constructors.ConstructorEventDispatcher;
 	import com.quilombo.constructors.PatternNameEvent;
+
 
 	public class EZflarEx extends EZflar
 	{
@@ -26,6 +30,7 @@ package com.quilombo
 		protected var _funcMarkerMouseOut:Function;
 
 		protected var _funcPreAdded:Function;
+		protected var _skipFrames:uint=0;
 		
 		public function EZflarEx ( configuration:ConfigHolder )
 		{
@@ -42,6 +47,7 @@ package com.quilombo
 				, configuration.patternMinConfidence
 				, configuration.markerUpdateThreshold
 				);
+			_skipFrames = configuration.skipMarkerDetectionFrames;
 		}
 
 		protected override function onMarkerAdded (evt:FLARMarkerEvent) :void 
@@ -174,6 +180,12 @@ package com.quilombo
 				super.removeChild(object);
 			}
 		}
+		protected override function createFlarManager(cameraParamsPath:String, patterns:Array, source:IFLARSource=null):FLARManager
+		{
+			trace("EZflarEx::createFlarManager cameraParamsPath[" + cameraParamsPath + "]");
+			// return super.createFlarManager( super._pathToResources + cameraParamsPath, patterns, source );
+			return new FLARManagerEx( cameraParamsPath, patterns, source );
+		}
 
 		protected override function init () :void 
 		{	
@@ -191,6 +203,13 @@ package com.quilombo
 				// which uses the extended version of the Base_model > BaseModelEx
 				flarManager.removeEventListener(Event.INIT, super.onFlarManagerInited);				
 				flarManager.addEventListener(Event.INIT, this.onFlarManagerInitiated);
+
+				// set the number of frames to skip
+				var flarManagerEx:FLARManagerEx = flarManager as FLARManagerEx;				
+				if(  flarManagerEx != null )
+				{
+					flarManagerEx.skipFrames = _skipFrames;
+				}
 			}
 		}
 	}

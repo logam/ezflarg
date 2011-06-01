@@ -21,6 +21,7 @@ package com.tchatcho {
 	import com.transmote.flar.FLARManager;
 	import com.transmote.flar.FLARMarkerEvent;
 	import com.transmote.flar.FLARPattern;
+	import com.transmote.flar.IFLARSource;
 	import com.transmote.utils.time.FramerateDisplay;
 
 	import flash.display.Sprite;
@@ -147,7 +148,8 @@ package com.tchatcho {
 				}
 
 				// use Camera (default)
-				this.flarManager = new FLARManager(_pathToResources + CAMERA_PARAMS_PATH, patterns,_camSource);
+				// this.flarManager = new FLARManager(_pathToResources + CAMERA_PARAMS_PATH, patterns,_camSource);
+				this.flarManager = createFlarManager(_pathToResources + CAMERA_PARAMS_PATH, patterns, _camSource);
 				this.flarManager.markerUpdateThreshold = _markerUpdateThreshold;
 				this.addChild(FLARCameraSource(this.flarManager.flarSource));
 
@@ -163,6 +165,16 @@ package com.tchatcho {
 				this.mirror();
 			}
 		}
+
+		/**
+			returns a FlarManagerObject. This method can be overridden in a subclass in order to create a custom FlarManager
+		*/
+		protected function createFlarManager(cameraParamsPath:String, patterns:Array, source:IFLARSource=null):FLARManager
+		{
+			trace("EZflar::createFlarManager cameraParamsPath[" + cameraParamsPath + "]");
+			return new FLARManager(cameraParamsPath, patterns, source);
+		}
+
 		public function customizeNoCam(message:String, colorTxt:uint, colorBackground:uint):void
 		{
 			_noCamMessage 	= message;
