@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <application xmlns="http://ns.adobe.com/air/application/2.6"> 
     	<id>samples.android.EZflarg</id> 
-    	<versionNumber>0.0.14</versionNumber> 
+    	<versionNumber>0.0.15</versionNumber> 
     	<filename>EZflarg</filename> 
     	<initialWindow> 
         	<content>EZflargAir.swf</content> 

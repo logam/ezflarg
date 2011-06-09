@@ -33,6 +33,20 @@ package com.quilombo
 		}
 		
 		/**
+		*/
+		public function addElementToScene(element:DisplayObject3D):void
+		{
+			super._scene3D.addChild(element);
+		}
+
+		/**
+		*/
+		public function removeElementFromScene(element:DisplayObject3D):void
+		{
+			super._scene3D.removeChild(element);
+		}
+
+		/**
 	
 		*/
 		public override function addMarker (marker:FLARMarker) :void 

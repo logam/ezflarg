@@ -4,7 +4,12 @@ package com.quilombo
 
 	import com.quilombo.IMode;
 	import com.quilombo.MarkerModeBase;
+	import com.quilombo.IconAttributesHolder;
 
+	/** 
+		this class must be probably broken down because it is aggregated of
+		objects that could be handled differently. ie. the IconHolder member
+	*/
 	public class MarkerSequenceMode extends MarkerModeBase implements IMode  
 	{
 		protected var _messageAlreadyDetected:String;
@@ -21,6 +26,8 @@ package com.quilombo
 
 		protected var _currentMarkerIndex:int = -1;
 		protected var _markerSequence:Array;
+		protected var _icons:IconAttributesHolder = new IconAttributesHolder;
+
 		/**
 
 		*/
@@ -34,12 +41,23 @@ package com.quilombo
 			return _markerSequence.length;
 		}
 		
+		public function set icons(icons:IconAttributesHolder):void
+		{
+			_icons = icons;
+		}
+
+		public function get icons():IconAttributesHolder
+		{
+			return _icons;
+		}
+		
 		/**	start a new marker sequence and delete the old one. the new sequence determines
 			in which order the markers must be detected
 		*/
 		public function newSequence():void
 		{
 			_markerSequence = new Array();
+			_icons = new IconAttributesHolder;
 			_currentMarkerIndex = -1;
 		}
 

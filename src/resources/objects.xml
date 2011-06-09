@@ -2,37 +2,36 @@
 	<MediaElement>
 		<pattern>marker_001.pat</pattern>
 		<media>marker_display_001.jpg</media>
+		<icon>marker_display_icon_001.jpg</icon>
 		<label>display001</label>
 	</MediaElement>
 
 	<MediaElement>
 		<pattern>marker_002.pat</pattern>
 		<media>marker_display_002.jpg</media>
+		<icon>marker_display_icon_002.jpg</icon>
 		<label>display002</label>
 	</MediaElement>
 
 	<MediaElement>
-		<pattern>marker_32_003.pat</pattern>
+		<pattern>marker_003.pat</pattern>
 		<media>marker_display_003.jpg</media>
+		<icon>marker_display_icon_003.jpg</icon>
 		<label>display003</label>
 	</MediaElement>
 
 	<MediaElement>
 		<pattern>marker_004.pat</pattern>
 		<media>marker_display_004.jpg</media>
+		<icon>marker_display_icon_004.jpg</icon>
 		<label>display004</label>
-	</MediaElement>
-
-	<MediaElement>
-		<pattern>markersquare_001.pat</pattern>
-		<media>blaergCover.jpg</media>
-		<label>blaerg</label>
 	</MediaElement>
 
 	<TextElement>
 		<pattern>marker_005.pat</pattern>
 		<type>text</type>
 		<content>ein kurzer info text</content>
+		<icon>marker_display_icon_005.jpg</icon>
 		<label>los</label>
 	</TextElement>
 
@@ -42,6 +41,7 @@
 	<MediaElement>
 		<pattern>marker_005.pat</pattern>
 		<media>marker_display_005.jpg</media>
+		<icon>marker_display_icon_005.jpg</icon>
 		<label>display005</label>
 	</MediaElement>
 -->	
@@ -63,6 +63,7 @@
 		<pattern>marker_005.pat</pattern>
 		<media>movie.flv</media>
 		<label>mymovie</label>
+		<icon>marker_display_icon_005.jpg</icon>
 	</MediaElement>
 -->
 
@@ -74,6 +75,7 @@
 		<type>url</type>
 		<content>http://www.arte.tv</content>
 		<label>arte</label>
+		<icon>marker_display_icon_003.jpg</icon>
 	</TextElement>
 -->
 
@@ -85,6 +87,7 @@
 		<type>text</type>
 		<content>http://www.arte.tv</content>
 		<label>arte</label>
+		<icon>marker_display_icon_003.jpg</icon>
 	</TextElement>
 -->
 

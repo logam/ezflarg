@@ -48,6 +48,22 @@ package com.quilombo.display
 			return _offsetY;
 		}
 
+		public function set offsetX(x:int):void
+		{
+			_offsetX = x;
+		}
+
+		public function set offsetY(y:int):void
+		{
+			_offsetY = y;
+		}
+
+		protected function destroy():void
+		{
+			this.removeChildAt(0);
+			this.removeChildAt(1);
+		}
+
 		protected function construct	( width:int
 					  	, height:int
 						, colorTxt:uint

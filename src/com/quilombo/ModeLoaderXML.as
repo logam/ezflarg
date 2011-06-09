@@ -5,6 +5,7 @@ package com.quilombo
 	import com.quilombo.IMode;
 	import com.quilombo.MarkerSequenceMode;
 	import com.quilombo.DefaultMarkerMode;
+	import com.quilombo.IconAttributesHolder;
 
 	public class ModeLoaderXML 	extends ConfigLoaderBase
 					implements IConfigLoader
@@ -52,6 +53,8 @@ package com.quilombo
 		/**	expects the following xml elements
 
 			<OrderedSequence>
+				<Icons>
+				</Icons>
 				<Detect>
 					<Item>marker001</Item>
 					<Item>marker002</Item>
@@ -83,12 +86,56 @@ package com.quilombo
 		*/
 		protected function loadSequence(mode:MarkerSequenceMode, orderedSequence:XML):MarkerSequenceMode
 		{
+			// the icons attributes holder
+			var icons:IconAttributesHolder = new IconAttributesHolder;
+
 			// start a new sequence of markers that are going to be detected in the given order
-			mode.newSequence();
-			
+			mode.newSequence(); 
+
 			var childList:XMLList = orderedSequence.children();
 			for each (var child:XML in childList)
 			{
+				if ( child.name() == "Icons" )
+				{
+					var iconList:XMLList = orderedSequence.Icons.children();
+					trace("ModelLoaderXML::loadSequence() add <Icons> items\n" + iconList);
+
+					for each ( var iconsAttribute:XML in iconList)
+					{
+						if(iconsAttribute.name() == "IconWidth")
+						{
+							icons.iconWidth = iconsAttribute.text();
+						}
+
+						if(iconsAttribute.name() == "IconHeight")
+						{
+							icons.iconHeight = iconsAttribute.text();
+						}
+
+						if(iconsAttribute.name() == "IconsPerLine")
+						{
+							icons.numIconsPerLine = iconsAttribute.text();
+						}
+						
+						if(iconsAttribute.name() == "IconsInitiallyVisible")
+						{
+							icons.visibility = iconsAttribute.text() == "true";
+						}
+						
+						if(iconsAttribute.name() == "IconOpacityLevel")
+						{
+							icons.opacity = iconsAttribute.text();
+						}
+
+						if(iconsAttribute.name() == "LinePosition")
+						{
+							icons.pos.x = iconsAttribute.X.text();
+							icons.pos.y = iconsAttribute.Y.text();
+						}
+					}
+					mode.icons = icons;
+				}
+
 				if ( child.name() == "Detect")
 				{
 					var itemList:XMLList = orderedSequence.Detect.Item;

@@ -28,6 +28,17 @@
 			</WrongOrder>
 			<DisplayTime>5000</DisplayTime>			
 		</Error>
+		<Icons>
+			<IconWidth>45</IconWidth>
+			<IconHeight>45</IconHeight>
+			<IconsPerLine>10</IconsPerLine>
+			<LinePosition>
+				<X>25</X>
+				<Y>325</Y>
+			</LinePosition>
+			<IconsInitiallyVisible>false</IconsInitiallyVisible>
+			<IconOpacityLevel>0.75</IconOpacityLevel>
+		</Icons>
 	</OrderedSequence>
 -->
 </Mode>

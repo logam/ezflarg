@@ -1,26 +1,32 @@
 package com.quilombo
 {
 	import com.quilombo.ConfigLoaderBase;
-	import com.quilombo.ConfigHolder;
+	import com.quilombo.PatternHolder;
 
 	public class PatternLoaderXML 	extends ConfigLoaderBase
 					implements IConfigLoader
 	{
 		/**
-			returns a reference to a new and filled Array object
+			returns a reference to a new and filled PatternHolder object
 		*/
 		public function load(value:Object):Object
 		{
+			trace("PatternLoaderXML::load()");
+
 			super.loadXML(value);
 			setDefaults(); // just for consistency because loaders are calling this function here in general. 
-			var symbols:Array = new Array;
-
-			var mediaElementList:XMLList = super._xml.MediaElement;
+			
+			var patternHolder:PatternHolder = new PatternHolder;
+			var symbols:Array 		= new Array;
+			var icons:Vector.<String> 	= new Vector.<String>;
+			var mediaElementList:XMLList 	= super._xml.MediaElement;
+			
 			for each (var mediaElement:XML in mediaElementList) 
 			{
 				trace(mediaElement.pattern.text());
 				trace(mediaElement.media.text());
 				trace(mediaElement.label.text());
+				trace(mediaElement.icon.text());
 
 				symbols.push
 				(
@@ -32,6 +38,14 @@ package com.quilombo
 						]
 					]
 				);
+
+				icons.push
+				( 
+					[ 
+						[ mediaElement.label.text() ]
+					,	[ mediaElement.icon.text() ]
+					]
+				);
 			}
 
 			var textElementList:XMLList = super._xml.TextElement;
@@ -41,6 +55,8 @@ package com.quilombo
 				trace(textElement.type.text());
 				trace(textElement.content.text());
 				trace(textElement.label.text());
+				trace(textElement.icon.text());
+
 				symbols.push
 				(
 					[
@@ -52,9 +68,20 @@ package com.quilombo
 						]	
 					]
 				);
-			}
 
-			return symbols;
+				icons.push
+				( 
+					[ 
+						mediaElement.label.text()
+					,	mediaElement.icon.text()
+					]
+				);
+			}
+			
+			patternHolder.objectHolder.objects 	= symbols;
+			patternHolder.iconHolder.objects	= icons;
+
+			return patternHolder;
 		}
 		
 		/**

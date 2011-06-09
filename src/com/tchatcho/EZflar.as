@@ -122,20 +122,31 @@ package com.tchatcho {
 			{
 				trace("[EZflar::init] no camera available");
 								
-				// var messageNoCam:String = "camera is not supported on this platform" + Camera.names;
-				// _nocam = new NoCamera(_width,_height, messageNoCam, _noCamColorTxt, _noCamColorBackground);
-				_nocam = new NoCamera(_width,_height, _noCamMessage, _noCamColorTxt, _noCamColorBackground);				
+				_nocam = new NoCamera(
+					_width,_height, _noCamMessage, _noCamColorTxt, _noCamColorBackground );				
 				this.addChild(_nocam);
 			} 
 			else 
 			{
 				trace("[EZflar::init] camera available");
+				
 				_camSource = new FLARCameraSource(_width, _height, _frameRate, _downSampleRatio)
+				
 				// build list of FLARPatterns for FLARToolkit to detect
 				this.patterns = new Array();
-				for (var i:int = 0; i < _objects.length; i++) {
-					if(_objects[i][0][2] == undefined){_objects[i][0][2] = null}
-					if(_objects[i][1] == undefined){_objects[i][1] = null}
+				for (var i:int = 0; i < _objects.length; i++) 
+				{
+					if(_objects[i][0][2] == undefined)
+					{
+						_objects[i][0][2] = null
+					}
+					if(_objects[i][1] == undefined)
+					{
+						_objects[i][1] = null
+					}
+					var str:String = _objects[i][0][0] as String;
+					trace("EZflar::init() pattern[" + str + "]");
+
 					this.patterns.push(
     						  new FLARPattern(
 							  _pathToResources + PATTERN_PATH + _objects[i][0][0]
@@ -146,9 +157,8 @@ package com.tchatcho {
 							)
 						);
 				}
-
+				
 				// use Camera (default)
-				// this.flarManager = new FLARManager(_pathToResources + CAMERA_PARAMS_PATH, patterns,_camSource);
 				this.flarManager = createFlarManager(_pathToResources + CAMERA_PARAMS_PATH, patterns, _camSource);
 				this.flarManager.markerUpdateThreshold = _markerUpdateThreshold;
 				this.addChild(FLARCameraSource(this.flarManager.flarSource));
@@ -157,7 +167,7 @@ package com.tchatcho {
 				this.flarManager.addEventListener(FLARMarkerEvent.MARKER_ADDED, this.onMarkerAdded);
 				this.flarManager.addEventListener(FLARMarkerEvent.MARKER_UPDATED, this.onMarkerUpdated);
 				this.flarManager.addEventListener(FLARMarkerEvent.MARKER_REMOVED, this.onMarkerRemoved);
-				this.flarManager.addEventListener(Event.INIT, this.onFlarManagerInited);
+				this.flarManager.addEventListener(Event.INIT, this.onFlarManagerInited);		
 			}
 			if(this._isMirrored == false)
 			{
@@ -194,7 +204,8 @@ package com.tchatcho {
 				this.addChild(_nocam);
 			}			
 		}
-		public function mirror():void{
+		public function mirror():void
+		{
 			if(this._isMirrored == false){
 				this.scaleX = -1;
 				this.x = _width;
