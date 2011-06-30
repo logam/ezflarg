@@ -27,7 +27,7 @@ package com.quilombo.flar
 
 		protected override function onEnterFrame (evt:Event) :void 
 		{
-			trace("FLARManagerEx::onEnterFrame framecount [" + _frameCount + "] skipframes [" + _skipFrames + "]");
+			// trace("FLARManagerEx::onEnterFrame framecount [" + _frameCount + "] skipframes [" + _skipFrames + "]");
 			if (!this.updateSource()) 
 			{ 
 				return; 

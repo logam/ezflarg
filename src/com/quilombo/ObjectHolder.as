@@ -18,7 +18,7 @@ package com.quilombo
 
 		public function toString():String
 		{
-			return "ObjectHolder::toString()";
+			return "ObjectHolder::toString(): objects [" + _objects.toString() + "]";
 		}
 	}
 }

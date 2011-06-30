@@ -144,8 +144,8 @@ package com.tchatcho {
 					{
 						_objects[i][1] = null
 					}
-					var str:String = _objects[i][0][0] as String;
-					trace("EZflar::init() pattern[" + str + "]");
+					
+					trace("EZflar::init() pattern[" + _objects[i].toString() + "]");
 
 					this.patterns.push(
     						  new FLARPattern(

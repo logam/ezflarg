@@ -87,6 +87,7 @@ package com.tchatcho {
 			objectsToAdd.push(_objectsToAdd[i])
 		}
 		
+		trace( "Base_model::addMarker() _objects[ " + marker.patternId + "] [" + _objects[marker.patternId].toString() + "]" );
 		objectsToAdd.push([constructURL([ marker.patternId
 						, _objects[marker.patternId][0][1]
 						, _objects[marker.patternId][0][2]])
@@ -299,7 +300,9 @@ package com.tchatcho {
 					this._objectsToAdd.push([constructURL(set1), set2])
 					}
 
-					public function constructURL(income:Array):Array{
+					public function constructURL(income:Array):Array
+					{
+						trace( "Base_model::constructURL income [" + income.toString() + "]"  );
 						var url1:String = new String();
 						var url2:String = new String();
 						if (income[1] != null){
@@ -307,9 +310,23 @@ package com.tchatcho {
 						} else {
 							url1 = null;
 						}
-						if (income[2] != null){
-							url2 = _pathToResources + _modelsPath + income[2];
-						} else {
+						if (income[2] != null)
+						{
+							if( income[2].search("http://") || 
+							    income[2].search("https://")|| 
+							    income[2].search("www.") 	||
+							    income[2].search("file:///") 
+							  )
+							{	
+								url2 = income[2];
+							}
+							else
+							{
+								url2 = _pathToResources + _modelsPath + income[2];
+							}
+						} 
+						else 
+						{
 							url2 = null;
 						}
 						return [income[0],url1,url2]

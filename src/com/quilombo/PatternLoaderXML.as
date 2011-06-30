@@ -39,13 +39,22 @@ package com.quilombo
 					]
 				);
 
-				icons.push
-				( 
-					[ 
-						[ mediaElement.label.text() ]
-					,	[ mediaElement.icon.text() ]
-					]
-				);
+				if( mediaElement.icon.text().length() > 0 )
+				{
+					icons.push
+					( 
+						[ 
+							[ mediaElement.label.text() ]
+						,	[ mediaElement.icon.text() ]
+						]
+					);
+					
+					trace("PatternLoaderXML::load()" + "found icon in mediaElement \n" + mediaElement.icon.name() );
+				}
+				else
+				{
+					trace("PatternLoaderXML::load()" + "no icon in mediaElement found \n" + mediaElement.name() );
+				}
 			}
 
 			var textElementList:XMLList = super._xml.TextElement;
@@ -68,14 +77,22 @@ package com.quilombo
 						]	
 					]
 				);
-
-				icons.push
-				( 
-					[ 
-						mediaElement.label.text()
-					,	mediaElement.icon.text()
-					]
-				);
+				
+				if( textElement.icon.text().length() > 0 )
+				{
+					icons.push
+					( 
+						[ 
+							mediaElement.label.text()
+						,	mediaElement.icon.text()
+						]
+					);
+					trace("PatternLoaderXML::load()" + "found icon in textElement \n" + textElement.icon.name() );
+				}
+				else
+				{
+					trace("PatternLoaderXML::load()" + "no icon in textElement found \n" + textElement.name() );
+				}
 			}
 			
 			patternHolder.objectHolder.objects 	= symbols;
